@@ -38,10 +38,9 @@ entity rom is
 end rom;
 
 architecture Behavioral of rom is
-    component blk_mem_gen_1
+    component blk_mem_gen_0
         port (
             clka : IN STD_LOGIC;
-            ena : IN STD_LOGIC;
             wea : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
             addra : IN STD_LOGIC_VECTOR(9 DOWNTO 0);
             dina : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -49,10 +48,9 @@ architecture Behavioral of rom is
         );
     end component;
 begin
-    inner : blk_mem_gen_1
+    inner : blk_mem_gen_0
         PORT MAP (
             clka => clk,
-            ena => '1',
             wea => "0",
             addra(9 downto 0) => addr,
             dina => (others => '0'),
