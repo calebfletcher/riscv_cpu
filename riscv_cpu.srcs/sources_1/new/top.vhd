@@ -86,6 +86,8 @@ architecture Behavioral of top is
     signal alu_in2: STD_LOGIC_VECTOR (31 downto 0);
     signal alu_out: STD_LOGIC_VECTOR (31 downto 0);
     signal alu_sh_amt: INTEGER range 0 to 31;
+    
+    signal take_branch: BOOLEAN;
 begin
     rst <= btn(0);
     clkgen : entity work.clockworks
@@ -182,11 +184,28 @@ begin
                                  and (is_alu_reg or is_alu_imm or is_jal or is_jalr) = '1'
                              else '0';
                              
-        s_next_pc <= s_pc + unsigned(j_imm) when is_jal
-                            else unsigned(rs1) + unsigned(i_imm) when is_jalr
-                            else s_pc + 4;
+        s_next_pc <= PC + unsigned(b_imm) when (is_branch = '1' and take_branch)
+                        else s_pc + unsigned(j_imm) when is_jal
+                        else unsigned(rs1) + unsigned(i_imm) when is_jalr
+                        else s_pc + 4;
         
         ja(0) <= is_halted;
+        
+        case funct3 is
+            when "000" =>
+                take_branch <= rs1 = rs2;
+            when "001" =>
+                take_branch <= rs1 /= rs2;
+            when "100" =>
+                take_branch <= signed(rs1) < signed(rs2);
+            when "101" =>
+                take_branch <= signed(rs1) >= signed(rs2);
+            when "110" =>
+                take_branch <= unsigned(rs1) < unsigned(rs2);
+            when "111" =>
+                take_branch <= unsigned(rs1) >= unsigned(rs2);
+            when others => take_branch <= false;
+        end case;
     end process;
 
     process (all)
@@ -212,7 +231,7 @@ begin
                 alu_out <= alu_in1 or alu_in2;
             when "111" =>
                 alu_out <= alu_in1 and alu_in2;
-            when others => 
+            when others => alu_out <= x"00000000";
         end case;
     end process;
     
