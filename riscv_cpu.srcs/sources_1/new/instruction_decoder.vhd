@@ -63,7 +63,7 @@ begin
     is_branch  <= '1' when inst(6 downto 0) = "1100011" else '0';
     is_jalr    <= '1' when inst(6 downto 0) = "1100111" else '0';
     is_jal     <= '1' when inst(6 downto 0) = "1101111" else '0';
-    is_auipc   <= '1' when inst(6 downto 0) = "1101111" else '0';
+    is_auipc   <= '1' when inst(6 downto 0) = "0010111" else '0';
     is_lui     <= '1' when inst(6 downto 0) = "0110111" else '0';
     is_load    <= '1' when inst(6 downto 0) = "0000011" else '0';
     is_store   <= '1' when inst(6 downto 0) = "0100011" else '0';
