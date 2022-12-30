@@ -45,6 +45,7 @@ architecture Behavioral of top is
     
     type STATE is (FETCH_INST_1, FETCH_INST_2, FETCH_REGS, EXECUTE);
     signal s_current_state: STATE;
+    signal s_registers: T_REGISTER_BANK;
     
     signal core_clk: STD_LOGIC;
     signal rst: STD_LOGIC;
@@ -118,11 +119,21 @@ begin
     process (core_clk)
         variable count: UNSIGNED (11 downto 0) := (others => '0');
         variable current_state: STATE := FETCH_INST_1;
+        variable registers: T_REGISTER_BANK;
+        variable rs1: STD_LOGIC_VECTOR(31 downto 0);
+        variable rs2: STD_LOGIC_VECTOR(31 downto 0);
+        variable rd: STD_LOGIC_VECTOR(31 downto 0);
+        
+        variable write_back_en: STD_LOGIC := '0';
+        variable write_back_data: STD_LOGIC_VECTOR(31 downto 0);
     begin
         if rising_edge(core_clk) then
             if rst then
                 current_state := current_state;
                 count := (others => '0');
+                for i in 0 to 31 loop
+                    registers(i) := (others => '0');
+                end loop;
             else
                 case current_state is
                     when FETCH_INST_1 =>
@@ -131,17 +142,27 @@ begin
                         inst <= rom_dout;
                         current_state := FETCH_REGS;
                     when FETCH_REGS =>
+                        rs1 := registers(to_integer(unsigned(rs1_reg)));
+                        rs2 := registers(to_integer(unsigned(rs2_reg)));
                         current_state := EXECUTE;
                     when EXECUTE =>
                         if not is_system then
                             count := count + 4;
                             current_state := FETCH_INST_1;
+                            
+                            write_back_en := '1';
+                            write_back_data := x"DEADBEEF";
                         end if;
                 end case;
+                
+                if write_back_en = '1' and rd_reg /= "00000" then
+                    registers(to_integer(unsigned(rd_reg))) := write_back_data;
+                end if;
             end if;
         end if;
         pc <= STD_LOGIC_VECTOR(count);
         s_current_state <= current_state;
+        s_registers <= registers;
     end process;
     
     pc_word <= pc(11 downto 2);

@@ -12,15 +12,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="153.333 ns"></ZoomStartTime>
-      <ZoomEndTime time="467.334 ns"></ZoomEndTime>
-      <Cursor1Time time="415.000 ns"></Cursor1Time>
+      <ZoomStartTime time="74.571 ns"></ZoomStartTime>
+      <ZoomEndTime time="105.972 ns"></ZoomEndTime>
+      <Cursor1Time time="85.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="206"></NameColumnWidth>
       <ValueColumnWidth column_width="91"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="9" />
+   <WVObjectSize size="10" />
    <wvobject type="logic" fp_name="/tb_top/rom/core_clk">
       <obj_property name="ElementShortName">core_clk</obj_property>
       <obj_property name="ObjectShortName">core_clk</obj_property>
@@ -56,5 +56,11 @@
    <wvobject type="logic" fp_name="/tb_top/rom/is_system">
       <obj_property name="ElementShortName">is_system</obj_property>
       <obj_property name="ObjectShortName">is_system</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_top/rom/s_registers">
+      <obj_property name="ElementShortName">s_registers[31:0][31:0]</obj_property>
+      <obj_property name="ObjectShortName">s_registers[31:0][31:0]</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <obj_property name="Reversed">false</obj_property>
    </wvobject>
 </wave_config>
