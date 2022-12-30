@@ -44,7 +44,7 @@ end top;
 architecture Behavioral of top is
     type T_REGISTER_BANK is array (31 downto 0) of STD_LOGIC_VECTOR (31 downto 0);
     
-    type STATE is (FETCH_INST_1, FETCH_INST_2, FETCH_REGS, EXECUTE);
+    type STATE is (FETCH_INST, WAIT_INST, FETCH_REGS, EXECUTE);
     signal s_current_state: STATE;
     signal s_registers: T_REGISTER_BANK;
     
@@ -132,7 +132,7 @@ begin
         
     process (core_clk)
         variable pc: UNSIGNED (31 downto 0) := (others => '0');
-        variable current_state: STATE := FETCH_INST_1;
+        variable current_state: STATE := FETCH_INST;
         variable registers: T_REGISTER_BANK;
         variable rs1: STD_LOGIC_VECTOR(31 downto 0);
         variable rs2: STD_LOGIC_VECTOR(31 downto 0);
@@ -148,9 +148,9 @@ begin
                 end loop;
             else
                 case current_state is
-                    when FETCH_INST_1 =>
-                        current_state := FETCH_INST_2;
-                    when FETCH_INST_2 =>
+                    when FETCH_INST =>
+                        current_state := WAIT_INST;
+                    when WAIT_INST =>
                         inst <= rom_dout;
                         current_state := FETCH_REGS;
                     when FETCH_REGS =>
@@ -162,7 +162,7 @@ begin
                             is_halted := '1';
                         else
                             pc := s_next_pc;
-                            current_state := FETCH_INST_1;
+                            current_state := FETCH_INST;
                         end if;
                 end case;
                 
