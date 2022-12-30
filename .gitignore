@@ -5,3 +5,6 @@
 *.runs/
 *.sim/
 
+*.jou
+*.log
+**.swp
