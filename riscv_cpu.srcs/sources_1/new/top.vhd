@@ -41,15 +41,17 @@ entity top is
 end top;
 
 architecture Behavioral of top is
+    type T_REGISTER_BANK is array (31 downto 0) of STD_LOGIC_VECTOR (31 downto 0);
+    
+    type STATE is (FETCH_INST_1, FETCH_INST_2, FETCH_REGS, EXECUTE);
+    signal s_current_state: STATE;
+    
     signal core_clk: STD_LOGIC;
     signal rst: STD_LOGIC;
     signal pc: STD_LOGIC_VECTOR (11 downto 0) := (others => '0');
     signal pc_word: STD_LOGIC_VECTOR (9 downto 0);
     signal inst: STD_LOGIC_VECTOR (31 downto 0);
     signal rom_dout: STD_LOGIC_VECTOR (31 downto 0);
-    
-    signal s_inc_pc: STD_LOGIC := '1';
-    signal s_inst_valid: STD_LOGIC := '0';
 
     signal is_alu_reg : STD_LOGIC;
     signal is_alu_imm : STD_LOGIC;
@@ -83,7 +85,7 @@ begin
         
     rom : entity work.rom
         port map (
-            clk => CLK100MHZ,
+            clk => core_clk,
             addr => pc_word,
             dout => rom_dout
         );
@@ -115,35 +117,31 @@ begin
         
     process (core_clk)
         variable count: UNSIGNED (11 downto 0) := (others => '0');
-        variable inc_pc: STD_LOGIC := '1';
-        variable inst_valid: STD_LOGIC := '0';
-        variable load_inst: STD_LOGIC := '0';
+        variable current_state: STATE := FETCH_INST_1;
     begin
         if rising_edge(core_clk) then
-            if inst_valid then
-                -- process instruction
-                inst_valid := '0';
-                inc_pc := '1';
-            end if;
-            
-            -- one cycle memory access latency from blockrom
-            if load_inst then
-                inst <= rom_dout;
-                load_inst := '0';
-                inst_valid := '1';
-            end if;
-            
             if rst then
+                current_state := current_state;
                 count := (others => '0');
-            elsif (inc_pc and not is_system) then
-                count := count + 4;
-                inc_pc := '0';
-                load_inst := '1';
+            else
+                case current_state is
+                    when FETCH_INST_1 =>
+                        current_state := FETCH_INST_2;
+                    when FETCH_INST_2 =>
+                        inst <= rom_dout;
+                        current_state := FETCH_REGS;
+                    when FETCH_REGS =>
+                        current_state := EXECUTE;
+                    when EXECUTE =>
+                        if not is_system then
+                            count := count + 4;
+                            current_state := FETCH_INST_1;
+                        end if;
+                end case;
             end if;
         end if;
         pc <= STD_LOGIC_VECTOR(count);
-        s_inc_pc <= inc_pc;
-        s_inst_valid <= inst_valid;
+        s_current_state <= current_state;
     end process;
     
     pc_word <= pc(11 downto 2);
