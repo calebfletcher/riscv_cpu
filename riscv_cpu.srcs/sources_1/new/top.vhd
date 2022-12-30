@@ -74,6 +74,16 @@ architecture Behavioral of top is
     signal s_imm : STD_LOGIC_VECTOR (31 downto 0);
     signal b_imm : STD_LOGIC_VECTOR (31 downto 0);
     signal j_imm : STD_LOGIC_VECTOR (31 downto 0);
+    
+
+    signal write_back_en: STD_LOGIC;
+    signal write_back_data: STD_LOGIC_VECTOR(31 downto 0);
+    
+    -- ALU
+    signal alu_in1: STD_LOGIC_VECTOR (31 downto 0);
+    signal alu_in2: STD_LOGIC_VECTOR (31 downto 0);
+    signal alu_out: STD_LOGIC_VECTOR (31 downto 0);
+    signal alu_sh_amt: INTEGER range 0 to 31;
 begin
     rst <= btn(0);
     clkgen : entity work.clockworks
@@ -123,9 +133,6 @@ begin
         variable rs1: STD_LOGIC_VECTOR(31 downto 0);
         variable rs2: STD_LOGIC_VECTOR(31 downto 0);
         variable rd: STD_LOGIC_VECTOR(31 downto 0);
-        
-        variable write_back_en: STD_LOGIC := '0';
-        variable write_back_data: STD_LOGIC_VECTOR(31 downto 0);
     begin
         if rising_edge(core_clk) then
             if rst then
@@ -149,9 +156,6 @@ begin
                         if not is_system then
                             count := count + 4;
                             current_state := FETCH_INST_1;
-                            
-                            write_back_en := '1';
-                            write_back_data := x"DEADBEEF";
                         end if;
                 end case;
                 
@@ -163,9 +167,43 @@ begin
         pc <= STD_LOGIC_VECTOR(count);
         s_current_state <= current_state;
         s_registers <= registers;
+        
+        alu_in1 <= rs1;
+        alu_in2 <= rs2 when is_alu_reg else i_imm;
+        alu_sh_amt <= to_integer(unsigned(rs2(4 downto 0))) when is_alu_reg else to_integer(unsigned(rs2_reg));
+        write_back_data <= alu_out;
+        write_back_en <= '1' when current_state = EXECUTE and (is_alu_reg = '1' or is_alu_imm = '1') else '0';
+    end process;
+
+    process (all)
+    begin
+        case funct3 is
+            when "000" =>
+                alu_out <= STD_LOGIC_VECTOR(unsigned(alu_in1) - unsigned(alu_in2))
+                            when (funct7(5) = '1' and inst(5) = '1')
+                            else STD_LOGIC_VECTOR(unsigned(alu_in1) + unsigned(alu_in2));
+            when "001" =>
+                alu_out <= STD_LOGIC_VECTOR(shift_left(unsigned(alu_in1), alu_sh_amt));
+            when "010" =>
+                alu_out <= x"00000001" when signed(alu_in1) < signed(alu_in2) else x"00000000";
+            when "011" =>
+                alu_out <= x"00000001" when unsigned(alu_in1) < unsigned(alu_in2) else x"00000000";
+            when "100" =>
+                alu_out <= alu_in1 xor alu_in2;
+            when "101" =>
+                alu_out <= STD_LOGIC_VECTOR(shift_right(signed(alu_in1), alu_sh_amt))
+                            when funct7(5)
+                            else STD_LOGIC_VECTOR(shift_right(unsigned(alu_in1), alu_sh_amt));
+            when "110" =>
+                alu_out <= alu_in1 or alu_in2;
+            when "111" =>
+                alu_out <= alu_in1 and alu_in2;
+            when others => 
+        end case;
     end process;
     
     pc_word <= pc(11 downto 2);
+    
     
     led <= (is_alu_reg & is_alu_imm & is_store & is_load);
 end Behavioral;

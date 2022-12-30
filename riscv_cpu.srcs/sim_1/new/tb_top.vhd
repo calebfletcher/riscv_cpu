@@ -56,7 +56,7 @@ begin
         rst <= '0';
         wait for period/2;
         
-        wait for period*40;
+        wait for period*50;
         
         assert false report "No errors found" severity failure;
         wait;
