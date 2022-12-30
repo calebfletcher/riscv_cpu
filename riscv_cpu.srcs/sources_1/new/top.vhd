@@ -179,9 +179,12 @@ begin
         alu_in1 <= rs1;
         alu_in2 <= rs2 when is_alu_reg else i_imm;
         alu_sh_amt <= to_integer(unsigned(rs2(4 downto 0))) when is_alu_reg else to_integer(unsigned(rs2_reg));
-        write_back_data <= STD_LOGIC_VECTOR(pc + 4) when (is_jal or is_jalr) else alu_out;
+        write_back_data <= STD_LOGIC_VECTOR(pc + 4) when (is_jal or is_jalr)
+                            else u_imm when is_lui
+                            else STD_LOGIC_VECTOR(pc + unsigned(u_imm)) when is_auipc
+                            else alu_out;
         write_back_en <= '1' when current_state = EXECUTE
-                                 and (is_alu_reg or is_alu_imm or is_jal or is_jalr) = '1'
+                                 and (is_alu_reg or is_alu_imm or is_jal or is_jalr or is_lui or is_auipc) = '1'
                              else '0';
                              
         s_next_pc <= PC + unsigned(b_imm) when (is_branch = '1' and take_branch)
