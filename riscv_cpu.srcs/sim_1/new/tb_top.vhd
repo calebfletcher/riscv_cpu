@@ -40,12 +40,14 @@ architecture Behavioral of tb_top is
     signal clk: STD_LOGIC := '0';
     signal rst : STD_LOGIC := '0';
     signal led : STD_LOGIC_VECTOR (3 downto 0);
+    signal is_halted : STD_LOGIC;
 begin
-    rom : entity work.top
+    top : entity work.top
         port map (
             CLK100MHZ => clk,
             btn(0) => rst,
-            led => led
+            led => led,
+            ja(0) => is_halted
         );
 
     clk <= not clk after period/2;
@@ -56,7 +58,8 @@ begin
         rst <= '0';
         wait for period/2;
         
-        wait for period*50;
+        wait until is_halted = '1';
+        wait for period;
         
         assert false report "No errors found" severity failure;
         wait;

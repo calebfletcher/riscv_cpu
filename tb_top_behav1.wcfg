@@ -12,16 +12,16 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="515.001 ns"></ZoomEndTime>
-      <Cursor1Time time="240.388 ns"></Cursor1Time>
+      <ZoomStartTime time="359.221 ns"></ZoomStartTime>
+      <ZoomEndTime time="486.422 ns"></ZoomEndTime>
+      <Cursor1Time time="416.021 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="206"></NameColumnWidth>
-      <ValueColumnWidth column_width="87"></ValueColumnWidth>
+      <ValueColumnWidth column_width="83"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="10" />
-   <wvobject type="logic" fp_name="/tb_top/rom/core_clk">
+   <WVObjectSize size="15" />
+   <wvobject type="logic" fp_name="/tb_top/top/core_clk">
       <obj_property name="ElementShortName">core_clk</obj_property>
       <obj_property name="ObjectShortName">core_clk</obj_property>
    </wvobject>
@@ -29,198 +29,56 @@
       <obj_property name="ElementShortName">rst</obj_property>
       <obj_property name="ObjectShortName">rst</obj_property>
    </wvobject>
-   <wvobject type="other" fp_name="/tb_top/rom/s_current_state">
+   <wvobject type="other" fp_name="/tb_top/top/s_current_state">
       <obj_property name="ElementShortName">s_current_state</obj_property>
       <obj_property name="ObjectShortName">s_current_state</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/tb_top/rom/pc">
-      <obj_property name="ElementShortName">pc[11:0]</obj_property>
-      <obj_property name="ObjectShortName">pc[11:0]</obj_property>
+   <wvobject type="array" fp_name="/tb_top/top/s_registers">
+      <obj_property name="ElementShortName">s_registers[31:0][31:0]</obj_property>
+      <obj_property name="ObjectShortName">s_registers[31:0][31:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/tb_top/rom/inst">
-      <obj_property name="ElementShortName">inst[31:0]</obj_property>
-      <obj_property name="ObjectShortName">inst[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/tb_top/rom/rom_dout">
-      <obj_property name="ElementShortName">rom_dout[31:0]</obj_property>
-      <obj_property name="ObjectShortName">rom_dout[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/tb_top/rom/is_load">
-      <obj_property name="ElementShortName">is_load</obj_property>
-      <obj_property name="ObjectShortName">is_load</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/tb_top/rom/is_store">
-      <obj_property name="ElementShortName">is_store</obj_property>
-      <obj_property name="ObjectShortName">is_store</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/tb_top/rom/is_system">
+   <wvobject type="logic" fp_name="/tb_top/top/is_system">
       <obj_property name="ElementShortName">is_system</obj_property>
       <obj_property name="ObjectShortName">is_system</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/tb_top/rom/s_registers">
-      <obj_property name="ElementShortName">s_registers[31:0][31:0]</obj_property>
-      <obj_property name="ObjectShortName">s_registers[31:0][31:0]</obj_property>
-      <obj_property name="isExpanded"></obj_property>
-      <obj_property name="Reversed">false</obj_property>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[31]">
-         <obj_property name="ElementShortName">[31][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[31][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[30]">
-         <obj_property name="ElementShortName">[30][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[30][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[29]">
-         <obj_property name="ElementShortName">[29][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[29][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[28]">
-         <obj_property name="ElementShortName">[28][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[28][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[27]">
-         <obj_property name="ElementShortName">[27][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[27][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[26]">
-         <obj_property name="ElementShortName">[26][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[26][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[25]">
-         <obj_property name="ElementShortName">[25][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[25][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[24]">
-         <obj_property name="ElementShortName">[24][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[24][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[23]">
-         <obj_property name="ElementShortName">[23][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[23][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[22]">
-         <obj_property name="ElementShortName">[22][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[22][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[21]">
-         <obj_property name="ElementShortName">[21][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[21][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[20]">
-         <obj_property name="ElementShortName">[20][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[20][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[19]">
-         <obj_property name="ElementShortName">[19][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[19][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[18]">
-         <obj_property name="ElementShortName">[18][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[18][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[17]">
-         <obj_property name="ElementShortName">[17][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[17][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[16]">
-         <obj_property name="ElementShortName">[16][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[16][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[15]">
-         <obj_property name="ElementShortName">[15][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[15][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[14]">
-         <obj_property name="ElementShortName">[14][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[14][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[13]">
-         <obj_property name="ElementShortName">[13][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[13][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[12]">
-         <obj_property name="ElementShortName">[12][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[12][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[11]">
-         <obj_property name="ElementShortName">[11][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[11][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[10]">
-         <obj_property name="ElementShortName">[10][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[10][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[9]">
-         <obj_property name="ElementShortName">[9][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[9][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[8]">
-         <obj_property name="ElementShortName">[8][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[8][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[7]">
-         <obj_property name="ElementShortName">[7][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[7][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[6]">
-         <obj_property name="ElementShortName">[6][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[6][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[5]">
-         <obj_property name="ElementShortName">[5][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[5][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[4]">
-         <obj_property name="ElementShortName">[4][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[4][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[3]">
-         <obj_property name="ElementShortName">[3][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[3][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[2]">
-         <obj_property name="ElementShortName">[2][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[2][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[1]">
-         <obj_property name="ElementShortName">[1][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[1][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_top/rom/s_registers[0]">
-         <obj_property name="ElementShortName">[0][31:0]</obj_property>
-         <obj_property name="ObjectShortName">[0][31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
+   <wvobject type="logic" fp_name="/tb_top/top/is_load">
+      <obj_property name="ElementShortName">is_load</obj_property>
+      <obj_property name="ObjectShortName">is_load</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_top/top/is_store">
+      <obj_property name="ElementShortName">is_store</obj_property>
+      <obj_property name="ObjectShortName">is_store</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_top/top/is_alu_reg">
+      <obj_property name="ElementShortName">is_alu_reg</obj_property>
+      <obj_property name="ObjectShortName">is_alu_reg</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_top/top/is_alu_imm">
+      <obj_property name="ElementShortName">is_alu_imm</obj_property>
+      <obj_property name="ObjectShortName">is_alu_imm</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_top/top/is_auipc">
+      <obj_property name="ElementShortName">is_auipc</obj_property>
+      <obj_property name="ObjectShortName">is_auipc</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_top/top/is_lui">
+      <obj_property name="ElementShortName">is_lui</obj_property>
+      <obj_property name="ObjectShortName">is_lui</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_top/top/is_branch">
+      <obj_property name="ElementShortName">is_branch</obj_property>
+      <obj_property name="ObjectShortName">is_branch</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_top/top/pc">
+      <obj_property name="ElementShortName">pc[11:0]</obj_property>
+      <obj_property name="ObjectShortName">pc[11:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_top/top/inst">
+      <obj_property name="ElementShortName">inst[31:0]</obj_property>
+      <obj_property name="ObjectShortName">inst[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_top/top/rom_dout">
+      <obj_property name="ElementShortName">rom_dout[31:0]</obj_property>
+      <obj_property name="ObjectShortName">rom_dout[31:0]</obj_property>
    </wvobject>
 </wave_config>

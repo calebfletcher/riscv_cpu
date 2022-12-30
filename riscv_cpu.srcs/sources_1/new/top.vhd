@@ -37,7 +37,8 @@ use xpm.vcomponents.all;
 entity top is
     port ( CLK100MHZ : in STD_LOGIC;
            btn : in STD_LOGIC_VECTOR (0 downto 0);
-           led : out STD_LOGIC_VECTOR (3 downto 0));
+           led : out STD_LOGIC_VECTOR (3 downto 0);
+           ja : out STD_LOGIC_VECTOR (0 downto 0));
 end top;
 
 architecture Behavioral of top is
@@ -133,6 +134,7 @@ begin
         variable rs1: STD_LOGIC_VECTOR(31 downto 0);
         variable rs2: STD_LOGIC_VECTOR(31 downto 0);
         variable rd: STD_LOGIC_VECTOR(31 downto 0);
+        variable is_halted: STD_LOGIC := '0';
     begin
         if rising_edge(core_clk) then
             if rst then
@@ -153,7 +155,9 @@ begin
                         rs2 := registers(to_integer(unsigned(rs2_reg)));
                         current_state := EXECUTE;
                     when EXECUTE =>
-                        if not is_system then
+                        if is_system then
+                            is_halted := '1';
+                        else
                             count := count + 4;
                             current_state := FETCH_INST_1;
                         end if;
@@ -173,6 +177,8 @@ begin
         alu_sh_amt <= to_integer(unsigned(rs2(4 downto 0))) when is_alu_reg else to_integer(unsigned(rs2_reg));
         write_back_data <= alu_out;
         write_back_en <= '1' when current_state = EXECUTE and (is_alu_reg = '1' or is_alu_imm = '1') else '0';
+        
+        ja(0) <= is_halted;
     end process;
 
     process (all)
