@@ -50,8 +50,9 @@ architecture Behavioral of top is
     
     signal core_clk: STD_LOGIC;
     signal rst: STD_LOGIC;
-    signal pc: STD_LOGIC_VECTOR (11 downto 0) := (others => '0');
-    signal pc_word: STD_LOGIC_VECTOR (9 downto 0);
+    signal s_pc: UNSIGNED (31 downto 0);
+    signal s_next_pc: UNSIGNED (31 downto 0);
+    signal pc_word: STD_LOGIC_VECTOR (29 downto 0);
     signal inst: STD_LOGIC_VECTOR (31 downto 0);
     signal rom_dout: STD_LOGIC_VECTOR (31 downto 0);
 
@@ -98,7 +99,7 @@ begin
     rom : entity work.rom
         port map (
             clk => core_clk,
-            addr => pc_word,
+            addr => pc_word(9 downto 0),
             dout => rom_dout
         );
         
@@ -128,7 +129,7 @@ begin
         );
         
     process (core_clk)
-        variable count: UNSIGNED (11 downto 0) := (others => '0');
+        variable pc: UNSIGNED (31 downto 0) := (others => '0');
         variable current_state: STATE := FETCH_INST_1;
         variable registers: T_REGISTER_BANK;
         variable rs1: STD_LOGIC_VECTOR(31 downto 0);
@@ -139,7 +140,7 @@ begin
         if rising_edge(core_clk) then
             if rst then
                 current_state := current_state;
-                count := (others => '0');
+                pc := (others => '0');
                 for i in 0 to 31 loop
                     registers(i) := (others => '0');
                 end loop;
@@ -158,25 +159,32 @@ begin
                         if is_system then
                             is_halted := '1';
                         else
-                            count := count + 4;
+                            pc := s_next_pc;
                             current_state := FETCH_INST_1;
                         end if;
                 end case;
                 
+                -- Write back to registers as long as the register isn't r0
                 if write_back_en = '1' and rd_reg /= "00000" then
                     registers(to_integer(unsigned(rd_reg))) := write_back_data;
                 end if;
             end if;
         end if;
-        pc <= STD_LOGIC_VECTOR(count);
+        s_pc <= pc;
         s_current_state <= current_state;
         s_registers <= registers;
         
         alu_in1 <= rs1;
         alu_in2 <= rs2 when is_alu_reg else i_imm;
         alu_sh_amt <= to_integer(unsigned(rs2(4 downto 0))) when is_alu_reg else to_integer(unsigned(rs2_reg));
-        write_back_data <= alu_out;
-        write_back_en <= '1' when current_state = EXECUTE and (is_alu_reg = '1' or is_alu_imm = '1') else '0';
+        write_back_data <= STD_LOGIC_VECTOR(pc + 4) when (is_jal or is_jalr) else alu_out;
+        write_back_en <= '1' when current_state = EXECUTE
+                                 and (is_alu_reg or is_alu_imm or is_jal or is_jalr) = '1'
+                             else '0';
+                             
+        s_next_pc <= s_pc + unsigned(j_imm) when is_jal
+                            else unsigned(rs1) + unsigned(i_imm) when is_jalr
+                            else s_pc + 4;
         
         ja(0) <= is_halted;
     end process;
@@ -208,8 +216,7 @@ begin
         end case;
     end process;
     
-    pc_word <= pc(11 downto 2);
-    
+    pc_word <= STD_LOGIC_VECTOR(s_pc(31 downto 2));    
     
     led <= (is_alu_reg & is_alu_imm & is_store & is_load);
 end Behavioral;
