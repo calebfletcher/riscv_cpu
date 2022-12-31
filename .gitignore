@@ -4,6 +4,7 @@
 *.ip_user_files/
 *.runs/
 *.sim/
+out/
 
 *.jou
 *.log
