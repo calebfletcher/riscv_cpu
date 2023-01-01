@@ -1,6 +1,14 @@
 # RISC-V CPU
 An experimental RISC-V CPU designed in VHDL for the Digilent Arty A7.
 
+## Running Rust
+Modify sample_prog
+```
+./rust.sh
+cp out/out.coe riscv_cpu.srcs/sources_1/rom.coe
+vivado -mode tcl -source regen_rom.tcl
+```
+
 ## Running Assembly
 To run assembly, first the assembly has to be assembled, linked, and converted into a Xilinx
 coefficients file format. This can be done by running:
