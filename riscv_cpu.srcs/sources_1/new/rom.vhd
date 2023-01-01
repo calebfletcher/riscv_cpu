@@ -34,26 +34,28 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity rom is
     port ( clk : in STD_LOGIC;
            addr : in STD_LOGIC_VECTOR (9 downto 0);
+           w_en: in STD_LOGIC_VECTOR (3 downto 0);
+           din : in STD_LOGIC_VECTOR (31 downto 0);
            dout : out STD_LOGIC_VECTOR (31 downto 0));
 end rom;
 
 architecture Behavioral of rom is
-    component blk_mem_gen_0
-        port (
-            clka : IN STD_LOGIC;
-            wea : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
-            addra : IN STD_LOGIC_VECTOR(9 DOWNTO 0);
-            dina : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
-            douta : OUT STD_LOGIC_VECTOR(31 DOWNTO 0) 
-        );
-    end component;
+    COMPONENT blk_mem_gen_0
+      PORT (
+        clka : IN STD_LOGIC;
+        wea : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+        addra : IN STD_LOGIC_VECTOR(9 DOWNTO 0);
+        dina : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+        douta : OUT STD_LOGIC_VECTOR(31 DOWNTO 0) 
+      );
+    END COMPONENT;
 begin
     inner : blk_mem_gen_0
         PORT MAP (
             clka => clk,
-            wea => "0",
-            addra(9 downto 0) => addr,
-            dina => (others => '0'),
+            wea => w_en,
+            addra => addr,
+            dina => din,
             douta => dout
         );
 end Behavioral;

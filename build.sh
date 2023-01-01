@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
+set -eux
 
 mkdir -p out
 (
 cd out
-riscv32-unknown-elf-as ../fn.asm -o assembled.out
-riscv32-unknown-elf-ld assembled.out -o linked.out -Ttext 0
+riscv32-unknown-elf-as ../mem.asm -o assembled.out
+riscv32-unknown-elf-ld assembled.out -o linked.out -T ../linker.ld
 riscv32-unknown-elf-objdump -d linked.out
 riscv32-unknown-elf-objcopy -O binary linked.out raw.out
 
