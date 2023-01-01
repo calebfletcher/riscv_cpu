@@ -12,15 +12,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="65.901 ns"></ZoomEndTime>
-      <Cursor1Time time="6.900 ns"></Cursor1Time>
+      <ZoomStartTime time="527.241 ns"></ZoomStartTime>
+      <ZoomEndTime time="659.842 ns"></ZoomEndTime>
+      <Cursor1Time time="549.100 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="200"></NameColumnWidth>
+      <NameColumnWidth column_width="196"></NameColumnWidth>
       <ValueColumnWidth column_width="66"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="11" />
+   <WVObjectSize size="14" />
    <wvobject type="logic" fp_name="/tb_top/top/clk">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -78,6 +78,7 @@
    <wvobject type="group" fp_name="group91">
       <obj_property name="label">Instruction Type</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/tb_top/top/processor/is_alu_reg">
          <obj_property name="ElementShortName">is_alu_reg</obj_property>
          <obj_property name="ObjectShortName">is_alu_reg</obj_property>
@@ -168,102 +169,114 @@
       </wvobject>
    </wvobject>
    <wvobject type="group" fp_name="group322">
-      <obj_property name="label">Bus</obj_property>
+      <obj_property name="label">CPU Bus</obj_property>
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="isExpanded"></obj_property>
       <wvobject type="group" fp_name="group305">
          <obj_property name="label">Read Address</obj_property>
          <obj_property name="DisplayName">label</obj_property>
          <obj_property name="isExpanded"></obj_property>
-         <wvobject type="array" fp_name="/tb_top/top/axi_araddr">
-            <obj_property name="ElementShortName">axi_araddr[31:0]</obj_property>
-            <obj_property name="ObjectShortName">axi_araddr[31:0]</obj_property>
+         <wvobject type="array" fp_name="/tb_top/top/cpu_araddr">
+            <obj_property name="ElementShortName">cpu_araddr[31:0]</obj_property>
+            <obj_property name="ObjectShortName">cpu_araddr[31:0]</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/tb_top/top/axi_arvalid">
-            <obj_property name="ElementShortName">axi_arvalid</obj_property>
-            <obj_property name="ObjectShortName">axi_arvalid</obj_property>
+         <wvobject type="logic" fp_name="/tb_top/top/cpu_arvalid">
+            <obj_property name="ElementShortName">cpu_arvalid</obj_property>
+            <obj_property name="ObjectShortName">cpu_arvalid</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/tb_top/top/axi_arready">
-            <obj_property name="ElementShortName">axi_arready</obj_property>
-            <obj_property name="ObjectShortName">axi_arready</obj_property>
+         <wvobject type="logic" fp_name="/tb_top/top/cpu_arready">
+            <obj_property name="ElementShortName">cpu_arready</obj_property>
+            <obj_property name="ObjectShortName">cpu_arready</obj_property>
          </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group306">
          <obj_property name="label">Read Data</obj_property>
          <obj_property name="DisplayName">label</obj_property>
          <obj_property name="isExpanded"></obj_property>
-         <wvobject type="array" fp_name="/tb_top/top/axi_rdata">
-            <obj_property name="ElementShortName">axi_rdata[31:0]</obj_property>
-            <obj_property name="ObjectShortName">axi_rdata[31:0]</obj_property>
+         <wvobject type="array" fp_name="/tb_top/top/cpu_rdata">
+            <obj_property name="ElementShortName">cpu_rdata[31:0]</obj_property>
+            <obj_property name="ObjectShortName">cpu_rdata[31:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/tb_top/top/axi_rresp">
-            <obj_property name="ElementShortName">axi_rresp[1:0]</obj_property>
-            <obj_property name="ObjectShortName">axi_rresp[1:0]</obj_property>
+         <wvobject type="array" fp_name="/tb_top/top/cpu_rresp">
+            <obj_property name="ElementShortName">cpu_rresp[1:0]</obj_property>
+            <obj_property name="ObjectShortName">cpu_rresp[1:0]</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/tb_top/top/axi_rvalid">
-            <obj_property name="ElementShortName">axi_rvalid</obj_property>
-            <obj_property name="ObjectShortName">axi_rvalid</obj_property>
+         <wvobject type="logic" fp_name="/tb_top/top/cpu_rvalid">
+            <obj_property name="ElementShortName">cpu_rvalid</obj_property>
+            <obj_property name="ObjectShortName">cpu_rvalid</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/tb_top/top/axi_rready">
-            <obj_property name="ElementShortName">axi_rready</obj_property>
-            <obj_property name="ObjectShortName">axi_rready</obj_property>
+         <wvobject type="logic" fp_name="/tb_top/top/cpu_rready">
+            <obj_property name="ElementShortName">cpu_rready</obj_property>
+            <obj_property name="ObjectShortName">cpu_rready</obj_property>
          </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group307">
          <obj_property name="label">Write Address</obj_property>
          <obj_property name="DisplayName">label</obj_property>
          <obj_property name="isExpanded"></obj_property>
-         <wvobject type="array" fp_name="/tb_top/top/axi_awaddr">
-            <obj_property name="ElementShortName">axi_awaddr[31:0]</obj_property>
-            <obj_property name="ObjectShortName">axi_awaddr[31:0]</obj_property>
+         <wvobject type="array" fp_name="/tb_top/top/cpu_awaddr">
+            <obj_property name="ElementShortName">cpu_awaddr[31:0]</obj_property>
+            <obj_property name="ObjectShortName">cpu_awaddr[31:0]</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/tb_top/top/axi_awvalid">
-            <obj_property name="ElementShortName">axi_awvalid</obj_property>
-            <obj_property name="ObjectShortName">axi_awvalid</obj_property>
+         <wvobject type="logic" fp_name="/tb_top/top/cpu_awvalid">
+            <obj_property name="ElementShortName">cpu_awvalid</obj_property>
+            <obj_property name="ObjectShortName">cpu_awvalid</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/tb_top/top/axi_awready">
-            <obj_property name="ElementShortName">axi_awready</obj_property>
-            <obj_property name="ObjectShortName">axi_awready</obj_property>
+         <wvobject type="logic" fp_name="/tb_top/top/cpu_awready">
+            <obj_property name="ElementShortName">cpu_awready</obj_property>
+            <obj_property name="ObjectShortName">cpu_awready</obj_property>
          </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group308">
          <obj_property name="label">Write Data</obj_property>
          <obj_property name="DisplayName">label</obj_property>
          <obj_property name="isExpanded"></obj_property>
-         <wvobject type="array" fp_name="/tb_top/top/axi_wdata">
-            <obj_property name="ElementShortName">axi_wdata[31:0]</obj_property>
-            <obj_property name="ObjectShortName">axi_wdata[31:0]</obj_property>
+         <wvobject type="array" fp_name="/tb_top/top/cpu_wdata">
+            <obj_property name="ElementShortName">cpu_wdata[31:0]</obj_property>
+            <obj_property name="ObjectShortName">cpu_wdata[31:0]</obj_property>
          </wvobject>
-         <wvobject type="array" fp_name="/tb_top/top/axi_wstrb">
-            <obj_property name="ElementShortName">axi_wstrb[3:0]</obj_property>
-            <obj_property name="ObjectShortName">axi_wstrb[3:0]</obj_property>
+         <wvobject type="array" fp_name="/tb_top/top/cpu_wstrb">
+            <obj_property name="ElementShortName">cpu_wstrb[3:0]</obj_property>
+            <obj_property name="ObjectShortName">cpu_wstrb[3:0]</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/tb_top/top/axi_wvalid">
-            <obj_property name="ElementShortName">axi_wvalid</obj_property>
-            <obj_property name="ObjectShortName">axi_wvalid</obj_property>
+         <wvobject type="logic" fp_name="/tb_top/top/cpu_wvalid">
+            <obj_property name="ElementShortName">cpu_wvalid</obj_property>
+            <obj_property name="ObjectShortName">cpu_wvalid</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/tb_top/top/axi_wready">
-            <obj_property name="ElementShortName">axi_wready</obj_property>
-            <obj_property name="ObjectShortName">axi_wready</obj_property>
+         <wvobject type="logic" fp_name="/tb_top/top/cpu_wready">
+            <obj_property name="ElementShortName">cpu_wready</obj_property>
+            <obj_property name="ObjectShortName">cpu_wready</obj_property>
          </wvobject>
       </wvobject>
       <wvobject type="group" fp_name="group309">
          <obj_property name="label">Write Response</obj_property>
          <obj_property name="DisplayName">label</obj_property>
          <obj_property name="isExpanded"></obj_property>
-         <wvobject type="array" fp_name="/tb_top/top/axi_bresp">
-            <obj_property name="ElementShortName">axi_bresp[1:0]</obj_property>
-            <obj_property name="ObjectShortName">axi_bresp[1:0]</obj_property>
+         <wvobject type="array" fp_name="/tb_top/top/cpu_bresp">
+            <obj_property name="ElementShortName">cpu_bresp[1:0]</obj_property>
+            <obj_property name="ObjectShortName">cpu_bresp[1:0]</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/tb_top/top/axi_bvalid">
-            <obj_property name="ElementShortName">axi_bvalid</obj_property>
-            <obj_property name="ObjectShortName">axi_bvalid</obj_property>
+         <wvobject type="logic" fp_name="/tb_top/top/cpu_bvalid">
+            <obj_property name="ElementShortName">cpu_bvalid</obj_property>
+            <obj_property name="ObjectShortName">cpu_bvalid</obj_property>
          </wvobject>
-         <wvobject type="logic" fp_name="/tb_top/top/axi_bready">
-            <obj_property name="ElementShortName">axi_bready</obj_property>
-            <obj_property name="ObjectShortName">axi_bready</obj_property>
+         <wvobject type="logic" fp_name="/tb_top/top/cpu_bready">
+            <obj_property name="ElementShortName">cpu_bready</obj_property>
+            <obj_property name="ObjectShortName">cpu_bready</obj_property>
          </wvobject>
       </wvobject>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_top/top/ram_awvalid">
+      <obj_property name="ElementShortName">ram_awvalid</obj_property>
+      <obj_property name="ObjectShortName">ram_awvalid</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_top/top/ram_wvalid">
+      <obj_property name="ElementShortName">ram_wvalid</obj_property>
+      <obj_property name="ObjectShortName">ram_wvalid</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_top/top/ram_wready">
+      <obj_property name="ElementShortName">ram_wready</obj_property>
+      <obj_property name="ObjectShortName">ram_wready</obj_property>
    </wvobject>
    <wvobject type="group" fp_name="group345">
       <obj_property name="label">Memory Load</obj_property>

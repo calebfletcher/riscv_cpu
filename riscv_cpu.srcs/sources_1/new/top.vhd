@@ -46,50 +46,149 @@ architecture Behavioral of top is
     signal rst: STD_LOGIC;
     signal is_halted: STD_LOGIC;
 
-    signal axi_awaddr : STD_LOGIC_VECTOR(31 DOWNTO 0);
-    signal axi_awvalid : STD_LOGIC;
-    signal axi_awready : STD_LOGIC;
-    signal axi_wdata : STD_LOGIC_VECTOR(31 DOWNTO 0);
-    signal axi_wstrb : STD_LOGIC_VECTOR(3 DOWNTO 0);
-    signal axi_wvalid : STD_LOGIC;
-    signal axi_wready : STD_LOGIC;
-    signal axi_bresp : STD_LOGIC_VECTOR(1 DOWNTO 0);
-    signal axi_bvalid : STD_LOGIC;
-    signal axi_bready : STD_LOGIC;
-    signal axi_araddr : STD_LOGIC_VECTOR(31 DOWNTO 0);
-    signal axi_arvalid : STD_LOGIC;
-    signal axi_arready : STD_LOGIC;
-    signal axi_rdata : STD_LOGIC_VECTOR(31 DOWNTO 0);
-    signal axi_rresp : STD_LOGIC_VECTOR(1 DOWNTO 0);
-    signal axi_rvalid : STD_LOGIC;
-    signal axi_rready : STD_LOGIC;
+    signal cpu_awaddr : STD_LOGIC_VECTOR(31 DOWNTO 0);
+    signal cpu_awvalid : STD_LOGIC;
+    signal cpu_awready : STD_LOGIC;
+    signal cpu_wdata : STD_LOGIC_VECTOR(31 DOWNTO 0);
+    signal cpu_wstrb : STD_LOGIC_VECTOR(3 DOWNTO 0);
+    signal cpu_wvalid : STD_LOGIC;
+    signal cpu_wready : STD_LOGIC;
+    signal cpu_bresp : STD_LOGIC_VECTOR(1 DOWNTO 0);
+    signal cpu_bvalid : STD_LOGIC;
+    signal cpu_bready : STD_LOGIC;
+    signal cpu_araddr : STD_LOGIC_VECTOR(31 DOWNTO 0);
+    signal cpu_arvalid : STD_LOGIC;
+    signal cpu_arready : STD_LOGIC;
+    signal cpu_rdata : STD_LOGIC_VECTOR(31 DOWNTO 0);
+    signal cpu_rresp : STD_LOGIC_VECTOR(1 DOWNTO 0);
+    signal cpu_rvalid : STD_LOGIC;
+    signal cpu_rready : STD_LOGIC;
     
+    signal ram_awaddr : STD_LOGIC_VECTOR(31 DOWNTO 0);
+    signal ram_awvalid : STD_LOGIC;
+    signal ram_awready : STD_LOGIC;
+    signal ram_wdata : STD_LOGIC_VECTOR(31 DOWNTO 0);
+    signal ram_wstrb : STD_LOGIC_VECTOR(3 DOWNTO 0);
+    signal ram_wvalid : STD_LOGIC;
+    signal ram_wready : STD_LOGIC;
+    signal ram_bresp : STD_LOGIC_VECTOR(1 DOWNTO 0);
+    signal ram_bvalid : STD_LOGIC;
+    signal ram_bready : STD_LOGIC;
+    signal ram_araddr : STD_LOGIC_VECTOR(31 DOWNTO 0);
+    signal ram_arvalid : STD_LOGIC;
+    signal ram_arready : STD_LOGIC;
+    signal ram_rdata : STD_LOGIC_VECTOR(31 DOWNTO 0);
+    signal ram_rresp : STD_LOGIC_VECTOR(1 DOWNTO 0);
+    signal ram_rvalid : STD_LOGIC;
+    signal ram_rready : STD_LOGIC;
+    
+    signal uart_awaddr : STD_LOGIC_VECTOR(31 DOWNTO 0);
+    signal uart_awvalid : STD_LOGIC;
+    signal uart_awready : STD_LOGIC;
+    signal uart_wdata : STD_LOGIC_VECTOR(31 DOWNTO 0);
+    signal uart_wstrb : STD_LOGIC_VECTOR(3 DOWNTO 0);
+    signal uart_wvalid : STD_LOGIC;
+    signal uart_wready : STD_LOGIC;
+    signal uart_bresp : STD_LOGIC_VECTOR(1 DOWNTO 0);
+    signal uart_bvalid : STD_LOGIC;
+    signal uart_bready : STD_LOGIC;
+    signal uart_araddr : STD_LOGIC_VECTOR(31 DOWNTO 0);
+    signal uart_arvalid : STD_LOGIC;
+    signal uart_arready : STD_LOGIC;
+    signal uart_rdata : STD_LOGIC_VECTOR(31 DOWNTO 0);
+    signal uart_rresp : STD_LOGIC_VECTOR(1 DOWNTO 0);
+    signal uart_rvalid : STD_LOGIC;
+    signal uart_rready : STD_LOGIC;
 begin
     clk <= CLK100MHZ;
     rst <= btn(0);
     ja(0) <= is_halted;
+    
+    crossbar : entity work.crossbar
+        port map (
+            aclk => clk,
+            aresetn => not rst,
+
+            m_axi_awprot => open,
+            m_axi_arprot => open,
+            s_axi_awprot => "000",
+            s_axi_arprot => "000",
+            
+            s_axi_awaddr => cpu_awaddr,
+            s_axi_awvalid => cpu_awvalid,
+            s_axi_awready => cpu_awready,
+            s_axi_wdata => cpu_wdata,
+            s_axi_wstrb => cpu_wstrb,
+            s_axi_wvalid => cpu_wvalid,
+            s_axi_wready => cpu_wready,
+            s_axi_bresp => cpu_bresp,
+            s_axi_bvalid => cpu_bvalid,
+            s_axi_bready => cpu_bready,
+            s_axi_araddr => cpu_araddr,
+            s_axi_arvalid => cpu_arvalid,
+            s_axi_arready => cpu_arready,
+            s_axi_rdata => cpu_rdata,
+            s_axi_rresp => cpu_rresp,
+            s_axi_rvalid => cpu_rvalid,
+            s_axi_rready => cpu_rready,
+            
+            m_axi_awaddr(63 downto 32) => uart_awaddr,
+            m_axi_awaddr(31 downto 0) => ram_awaddr,
+            m_axi_awvalid(1) => uart_awvalid,
+            m_axi_awvalid(0) => ram_awvalid,
+            m_axi_awready(1) => uart_awready,
+            m_axi_awready(0) => ram_awready,
+            m_axi_wdata(63 downto 32) => uart_wdata,
+            m_axi_wdata(31 downto 0) => ram_wdata,
+            m_axi_wstrb(7 downto 4) => uart_wstrb,
+            m_axi_wstrb(3 downto 0) => ram_wstrb,
+            m_axi_wvalid(1) => uart_wvalid,
+            m_axi_wvalid(0) => ram_wvalid,
+            m_axi_wready(1) => uart_wready,
+            m_axi_wready(0) => ram_wready,
+            m_axi_bresp(3 downto 2) => uart_bresp,
+            m_axi_bresp(1 downto 0) => ram_bresp,
+            m_axi_bvalid(1) => uart_bvalid,
+            m_axi_bvalid(0) => ram_bvalid,
+            m_axi_bready(1) => uart_bready,
+            m_axi_bready(0) => ram_bready,
+            m_axi_araddr(63 downto 32) => uart_araddr,
+            m_axi_araddr(31 downto 0) => ram_araddr,
+            m_axi_arvalid(1) => uart_arvalid,
+            m_axi_arvalid(0) => ram_arvalid,
+            m_axi_arready(1) => uart_arready,
+            m_axi_arready(0) => ram_arready,
+            m_axi_rdata(63 downto 32) => uart_rdata,
+            m_axi_rdata(31 downto 0) => ram_rdata,
+            m_axi_rresp(3 downto 2) => uart_rresp,
+            m_axi_rresp(1 downto 0) => ram_rresp,
+            m_axi_rvalid(1) => uart_rvalid,
+            m_axi_rvalid(0) => ram_rvalid,
+            m_axi_rready(1) => uart_rready,
+            m_axi_rready(0) => ram_rready
+        );
         
     ram : entity work.ram
         port map (
             s_aclk => clk,
             s_aresetn => not rst,
-            s_axi_awaddr => axi_awaddr,
-            s_axi_awvalid => axi_awvalid,
-            s_axi_awready => axi_awready,
-            s_axi_wdata => axi_wdata,
-            s_axi_wstrb => axi_wstrb,
-            s_axi_wvalid => axi_wvalid,
-            s_axi_wready => axi_wready,
-            s_axi_bresp => axi_bresp,
-            s_axi_bvalid => axi_bvalid,
-            s_axi_bready => axi_bready,
-            s_axi_araddr => axi_araddr,
-            s_axi_arvalid => axi_arvalid,
-            s_axi_arready => axi_arready,
-            s_axi_rdata => axi_rdata,
-            s_axi_rresp => axi_rresp,
-            s_axi_rvalid => axi_rvalid,
-            s_axi_rready => axi_rready
+            s_axi_awaddr => ram_awaddr,
+            s_axi_awvalid => ram_awvalid,
+            s_axi_awready => ram_awready,
+            s_axi_wdata => ram_wdata,
+            s_axi_wstrb => ram_wstrb,
+            s_axi_wvalid => ram_wvalid,
+            s_axi_wready => ram_wready,
+            s_axi_bresp => ram_bresp,
+            s_axi_bvalid => ram_bvalid,
+            s_axi_bready => ram_bready,
+            s_axi_araddr => ram_araddr,
+            s_axi_arvalid => ram_arvalid,
+            s_axi_arready => ram_arready,
+            s_axi_rdata => ram_rdata,
+            s_axi_rresp => ram_rresp,
+            s_axi_rvalid => ram_rvalid,
+            s_axi_rready => ram_rready
         );
         
     processor : entity work.processor
@@ -97,22 +196,22 @@ begin
             clk => clk,
             rst => rst,
             is_halted => is_halted,
-            m_axi_awaddr => axi_awaddr,
-            m_axi_awvalid => axi_awvalid,
-            m_axi_awready => axi_awready,
-            m_axi_wdata => axi_wdata,
-            m_axi_wstrb => axi_wstrb,
-            m_axi_wvalid => axi_wvalid,
-            m_axi_wready => axi_wready,
-            m_axi_bresp => axi_bresp,
-            m_axi_bvalid => axi_bvalid,
-            m_axi_bready => axi_bready,
-            m_axi_araddr => axi_araddr,
-            m_axi_arvalid => axi_arvalid,
-            m_axi_arready => axi_arready,
-            m_axi_rdata => axi_rdata,
-            m_axi_rresp => axi_rresp,
-            m_axi_rvalid => axi_rvalid,
-            m_axi_rready => axi_rready
+            m_axi_awaddr => cpu_awaddr,
+            m_axi_awvalid => cpu_awvalid,
+            m_axi_awready => cpu_awready,
+            m_axi_wdata => cpu_wdata,
+            m_axi_wstrb => cpu_wstrb,
+            m_axi_wvalid => cpu_wvalid,
+            m_axi_wready => cpu_wready,
+            m_axi_bresp => cpu_bresp,
+            m_axi_bvalid => cpu_bvalid,
+            m_axi_bready => cpu_bready,
+            m_axi_araddr => cpu_araddr,
+            m_axi_arvalid => cpu_arvalid,
+            m_axi_arready => cpu_arready,
+            m_axi_rdata => cpu_rdata,
+            m_axi_rresp => cpu_rresp,
+            m_axi_rvalid => cpu_rvalid,
+            m_axi_rready => cpu_rready
         );
 end Behavioral;

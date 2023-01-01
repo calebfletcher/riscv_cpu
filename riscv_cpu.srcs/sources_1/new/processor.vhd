@@ -174,9 +174,10 @@ begin
                     when RESET =>
                         -- Potential bug in Xilinx's BRAM AXI interface, the ARREADY signal
                         -- won't go high if you assert ARVALID within one clock cycle after reset.
-                        if m_axi_arready then
-                            current_state := FETCH_INST;
-                        end if;
+--                        if m_axi_arready then
+--                            current_state := FETCH_INST;
+--                        end if;
+                        current_state := FETCH_INST;
                     when FETCH_INST =>
                         if m_axi_arready then
                             current_state := WAIT_INST;
@@ -191,12 +192,22 @@ begin
                     when EXECUTE =>
                         if is_system then
                             halt_state := '1';
-                        else
-                            pc := s_next_pc;
                         end if;
-                        current_state := WAIT_DATA when is_load else STORE when is_store else FETCH_INST;
+                        
+                        if is_store and m_axi_awvalid and m_axi_awready then
+                            pc := s_next_pc;
+                            current_state := STORE;
+                        elsif is_load and m_axi_arvalid and m_axi_arready then
+                            pc := s_next_pc;
+                            current_state := WAIT_DATA;
+                        elsif not is_load and not is_store then
+                            pc := s_next_pc;
+                            current_state := FETCH_INST;
+                        end if;
                     when WAIT_DATA =>
-                        current_state := FETCH_INST;
+                        if m_axi_rready and m_axi_rvalid then
+                            current_state := FETCH_INST;
+                        end if;
                     when STORE =>
                         -- Hold in this state until the write completes
                         if m_axi_wready and m_axi_wvalid then                    
@@ -227,7 +238,7 @@ begin
                         else alu_out;
     write_back_en <= '1' when s_current_state = EXECUTE
                              and (not is_branch and not is_store and not is_load and not is_system) = '1'
-                     else '1' when s_current_state = WAIT_DATA
+                     else '1' when s_current_state = WAIT_DATA and m_axi_rready = '1' and m_axi_rvalid = '1'
                      else '0';
                          
     s_next_pc <= s_pc + unsigned(b_imm) when (is_branch = '1' and take_branch)
