@@ -9,3 +9,4 @@ out/
 *.jou
 *.log
 **.swp
+**.lock

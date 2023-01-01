@@ -44,44 +44,75 @@ end top;
 architecture Behavioral of top is
     signal clk: STD_LOGIC;
     signal rst: STD_LOGIC;
-    
-    signal bus_addr: STD_LOGIC_VECTOR (31 downto 0);
-    signal bus_r_data: STD_LOGIC_VECTOR (31 downto 0);
-    signal bus_r_strb: STD_LOGIC;
-    signal bus_w_data: STD_LOGIC_VECTOR (31 downto 0);
-    signal bus_w_mask: STD_LOGIC_VECTOR (3 downto 0);
-    
     signal is_halted: STD_LOGIC;
+
+    signal axi_awaddr : STD_LOGIC_VECTOR(31 DOWNTO 0);
+    signal axi_awvalid : STD_LOGIC;
+    signal axi_awready : STD_LOGIC;
+    signal axi_wdata : STD_LOGIC_VECTOR(31 DOWNTO 0);
+    signal axi_wstrb : STD_LOGIC_VECTOR(3 DOWNTO 0);
+    signal axi_wvalid : STD_LOGIC;
+    signal axi_wready : STD_LOGIC;
+    signal axi_bresp : STD_LOGIC_VECTOR(1 DOWNTO 0);
+    signal axi_bvalid : STD_LOGIC;
+    signal axi_bready : STD_LOGIC;
+    signal axi_araddr : STD_LOGIC_VECTOR(31 DOWNTO 0);
+    signal axi_arvalid : STD_LOGIC;
+    signal axi_arready : STD_LOGIC;
+    signal axi_rdata : STD_LOGIC_VECTOR(31 DOWNTO 0);
+    signal axi_rresp : STD_LOGIC_VECTOR(1 DOWNTO 0);
+    signal axi_rvalid : STD_LOGIC;
+    signal axi_rready : STD_LOGIC;
+    
 begin
+    clk <= CLK100MHZ;
     rst <= btn(0);
     ja(0) <= is_halted;
-
-    clkgen : entity work.clockworks
-        generic map (divider => 0)
-        port map (
-            clk => CLK100MHZ,
-            rst => rst,
-            clk_out => clk
-        );
         
     ram : entity work.ram
         port map (
-            clk => clk,
-            addr => bus_addr,
-            din => bus_w_data,
-            dout => bus_r_data,
-            w_en => bus_w_mask
+            s_aclk => clk,
+            s_aresetn => not rst,
+            s_axi_awaddr => axi_awaddr,
+            s_axi_awvalid => axi_awvalid,
+            s_axi_awready => axi_awready,
+            s_axi_wdata => axi_wdata,
+            s_axi_wstrb => axi_wstrb,
+            s_axi_wvalid => axi_wvalid,
+            s_axi_wready => axi_wready,
+            s_axi_bresp => axi_bresp,
+            s_axi_bvalid => axi_bvalid,
+            s_axi_bready => axi_bready,
+            s_axi_araddr => axi_araddr,
+            s_axi_arvalid => axi_arvalid,
+            s_axi_arready => axi_arready,
+            s_axi_rdata => axi_rdata,
+            s_axi_rresp => axi_rresp,
+            s_axi_rvalid => axi_rvalid,
+            s_axi_rready => axi_rready
         );
         
     processor : entity work.processor
         port map (
             clk => clk,
             rst => rst,
-            bus_addr => bus_addr,
-            bus_r_data => bus_r_data,
-            bus_r_strb => bus_r_strb,
-            bus_w_data => bus_w_data,
-            bus_w_mask => bus_w_mask,
-            is_halted => is_halted
+            is_halted => is_halted,
+            m_axi_awaddr => axi_awaddr,
+            m_axi_awvalid => axi_awvalid,
+            m_axi_awready => axi_awready,
+            m_axi_wdata => axi_wdata,
+            m_axi_wstrb => axi_wstrb,
+            m_axi_wvalid => axi_wvalid,
+            m_axi_wready => axi_wready,
+            m_axi_bresp => axi_bresp,
+            m_axi_bvalid => axi_bvalid,
+            m_axi_bready => axi_bready,
+            m_axi_araddr => axi_araddr,
+            m_axi_arvalid => axi_arvalid,
+            m_axi_arready => axi_arready,
+            m_axi_rdata => axi_rdata,
+            m_axi_rresp => axi_rresp,
+            m_axi_rvalid => axi_rvalid,
+            m_axi_rready => axi_rready
         );
 end Behavioral;

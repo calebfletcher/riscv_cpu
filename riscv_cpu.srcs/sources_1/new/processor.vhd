@@ -32,20 +32,39 @@ use IEEE.NUMERIC_STD.ALL;
 --use UNISIM.VComponents.all;
 
 entity processor is
-    Port ( clk : in STD_LOGIC;
-           rst : in STD_LOGIC;
-           bus_addr : out STD_LOGIC_VECTOR (31 downto 0);
-           bus_r_data : in STD_LOGIC_VECTOR (31 downto 0);
-           bus_r_strb : out STD_LOGIC;
-           bus_w_data : out STD_LOGIC_VECTOR (31 downto 0);
-           bus_w_mask : out STD_LOGIC_VECTOR (3 downto 0);
-           is_halted : out STD_LOGIC);
+    Port (
+        clk : IN STD_LOGIC;
+        rst : IN STD_LOGIC;
+        is_halted : OUT STD_LOGIC;
+        
+        m_axi_awaddr : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+        m_axi_awvalid : OUT STD_LOGIC;
+        m_axi_awready : IN STD_LOGIC;
+        
+        m_axi_wdata : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+        m_axi_wstrb : OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
+        m_axi_wvalid : OUT STD_LOGIC;
+        m_axi_wready : IN STD_LOGIC;
+        
+        m_axi_bresp : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
+        m_axi_bvalid : IN STD_LOGIC;
+        m_axi_bready : OUT STD_LOGIC;
+        
+        m_axi_araddr : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
+        m_axi_arvalid : OUT STD_LOGIC;
+        m_axi_arready : IN STD_LOGIC;
+        
+        m_axi_rdata : IN STD_LOGIC_VECTOR(31 DOWNTO 0);
+        m_axi_rresp : IN STD_LOGIC_VECTOR(1 DOWNTO 0);
+        m_axi_rvalid : IN STD_LOGIC;
+        m_axi_rready : OUT STD_LOGIC
+    );
 end processor;
 
 architecture Behavioral of processor is
     type T_REGISTER_BANK is array (31 downto 0) of STD_LOGIC_VECTOR (31 downto 0);
     
-    type STATE is (FETCH_INST, WAIT_INST, EXECUTE, WAIT_DATA);
+    type STATE is (RESET, FETCH_INST, WAIT_INST, EXECUTE, WAIT_DATA, STORE);
     signal s_current_state: STATE;
     signal s_registers: T_REGISTER_BANK;
 
@@ -140,7 +159,7 @@ begin
     begin
         if rising_edge(clk) then
             if rst then
-                current_state := current_state;
+                current_state := RESET;
                 pc := (others => '0');
                 for i in 0 to 31 loop
                     registers(i) := (others => '0');
@@ -152,22 +171,37 @@ begin
                 end if;
                 
                 case current_state is
+                    when RESET =>
+                        -- Potential bug in Xilinx's BRAM AXI interface, the ARREADY signal
+                        -- won't go high if you assert ARVALID within one clock cycle after reset.
+                        if m_axi_arready then
+                            current_state := FETCH_INST;
+                        end if;
                     when FETCH_INST =>
-                        current_state := WAIT_INST;
+                        if m_axi_arready then
+                            current_state := WAIT_INST;
+                        end if;
                     when WAIT_INST =>
-                        current_inst := bus_r_data;
-                        rs1 := registers(to_integer(unsigned(current_inst(19 downto 15))));
-                        rs2 := registers(to_integer(unsigned(current_inst(24 downto 20))));
-                        current_state := EXECUTE;
+                        if m_axi_rready and m_axi_rvalid then
+                            current_inst := m_axi_rdata;
+                            rs1 := registers(to_integer(unsigned(current_inst(19 downto 15))));
+                            rs2 := registers(to_integer(unsigned(current_inst(24 downto 20))));
+                            current_state := EXECUTE;
+                        end if;
                     when EXECUTE =>
                         if is_system then
                             halt_state := '1';
                         else
                             pc := s_next_pc;
                         end if;
-                        current_state := WAIT_DATA when is_load else FETCH_INST;
+                        current_state := WAIT_DATA when is_load else STORE when is_store else FETCH_INST;
                     when WAIT_DATA =>
                         current_state := FETCH_INST;
+                    when STORE =>
+                        -- Hold in this state until the write completes
+                        if m_axi_wready and m_axi_wvalid then                    
+                            current_state := FETCH_INST;
+                        end if;
                 end case;
             end if;
         end if;
@@ -183,7 +217,6 @@ begin
         s_rd <= rd;
     end process;
     
-    bus_r_strb <= '1' when s_current_state = FETCH_INST or (s_current_state = EXECUTE and is_load = '1') else '0';
     alu_in1 <= s_rs1;
     alu_in2 <= s_rs2 when is_alu_reg else i_imm;
     alu_sh_amt <= to_integer(unsigned(s_rs2(4 downto 0))) when is_alu_reg else to_integer(unsigned(rs2_reg));
@@ -202,23 +235,34 @@ begin
                     else unsigned(s_rs1) + unsigned(i_imm) when is_jalr
                     else s_pc + 4;
     
-    -- Memory
-    bus_addr <= STD_LOGIC_VECTOR(s_pc) when (s_current_state = WAIT_INST or s_current_state = FETCH_INST) else load_store_addr;
-    bus_w_mask <= store_mask when s_current_state = EXECUTE and is_store = '1' else "0000";
+    -- AXI Bus
+    m_axi_awaddr <= m_axi_araddr;
+    m_axi_awvalid <= '1' when s_current_state = EXECUTE and is_store = '1' else '0';
     
+    m_axi_wdata <= store_data;
+    m_axi_wstrb <= store_mask;
+    m_axi_wvalid <= '1' when s_current_state = STORE or (s_current_state = EXECUTE and is_store = '1') else '0';
+    
+    m_axi_bready <= '1'; -- always accept responses
+    
+    m_axi_araddr <= STD_LOGIC_VECTOR(s_pc) when s_current_state = FETCH_INST else load_store_addr;
+    m_axi_arvalid <= '1' when rst = '0' and (s_current_state = FETCH_INST or (s_current_state = EXECUTE and is_load = '1')) else '0';
+    
+    m_axi_rready <=  '1' when s_current_state = WAIT_INST or s_current_state = WAIT_DATA else '0';
+    
+    --
     load_store_addr <= STD_LOGIC_VECTOR(unsigned(s_rs1) + unsigned(s_imm)) when is_store
                         else STD_LOGIC_VECTOR(unsigned(s_rs1) + unsigned(i_imm));
-    load_halfword <= bus_r_data(31 downto 16) when load_store_addr(1) else bus_r_data(15 downto 0);
+    load_halfword <= m_axi_rdata(31 downto 16) when load_store_addr(1) else m_axi_rdata(15 downto 0);
     load_byte <= load_halfword(15 downto 8) when load_store_addr(0) else load_halfword(7 downto 0);
     mem_byte_access <= funct3(1 downto 0) = "00";
     mem_halfword_access <= funct3(1 downto 0) = "01";
     load_sign <= (not funct3(2) and load_byte(7)) when mem_byte_access else (not funct3(2) and load_halfword(15));
     load_data <= ((31 downto 8 => load_sign) & load_byte) when mem_byte_access
                     else ((31 downto 16 => load_sign) & load_halfword) when mem_halfword_access
-                    else bus_r_data;
+                    else m_axi_rdata;
 
     -- Construct data to write to RAM
-    bus_w_data <= store_data;
     store_data(7 downto 0) <= s_rs2(7 downto 0);
     store_data(15 downto 8) <= s_rs2(7 downto 0) when load_store_addr(0) else s_rs2(15 downto 8);
     store_data(23 downto 16) <= s_rs2(7 downto 0) when load_store_addr(1) else s_rs2(23 downto 16);
