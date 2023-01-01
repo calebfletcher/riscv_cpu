@@ -4,7 +4,7 @@ set -eux
 mkdir -p out
 (
 cd out
-riscv32-unknown-elf-objcopy -O binary ../sample_prog/target/riscv32i-unknown-none-elf/debug/sample_prog raw.out
+riscv32-unknown-elf-objcopy -O binary ../sample_prog/target/riscv32i-unknown-none-elf/release/sample_prog raw.out
 
 cat << EOF > out.coe
 memory_initialization_radix=16;
