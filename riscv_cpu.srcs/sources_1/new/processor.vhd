@@ -45,7 +45,7 @@ end processor;
 architecture Behavioral of processor is
     type T_REGISTER_BANK is array (31 downto 0) of STD_LOGIC_VECTOR (31 downto 0);
     
-    type STATE is (FETCH_INST, WAIT_INST, FETCH_REGS, EXECUTE, LOAD, WAIT_DATA, STORE);
+    type STATE is (FETCH_INST, WAIT_INST, EXECUTE, LOAD, WAIT_DATA, STORE);
     signal s_current_state: STATE;
     signal s_registers: T_REGISTER_BANK;
 
@@ -156,10 +156,8 @@ begin
                         current_state := WAIT_INST;
                     when WAIT_INST =>
                         current_inst := bus_r_data;
-                        current_state := FETCH_REGS;
-                    when FETCH_REGS =>
-                        rs1 := registers(to_integer(unsigned(rs1_reg)));
-                        rs2 := registers(to_integer(unsigned(rs2_reg)));
+                        rs1 := registers(to_integer(unsigned(current_inst(19 downto 15))));
+                        rs2 := registers(to_integer(unsigned(current_inst(24 downto 20))));
                         current_state := EXECUTE;
                     when EXECUTE =>
                         if is_system then
