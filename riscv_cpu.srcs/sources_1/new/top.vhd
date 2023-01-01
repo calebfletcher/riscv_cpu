@@ -44,7 +44,7 @@ end top;
 architecture Behavioral of top is
     type T_REGISTER_BANK is array (31 downto 0) of STD_LOGIC_VECTOR (31 downto 0);
     
-    type STATE is (FETCH_INST, WAIT_INST, FETCH_REGS, EXECUTE, LOAD, WAIT_DATA);
+    type STATE is (FETCH_INST, WAIT_INST, FETCH_REGS, EXECUTE, LOAD, WAIT_DATA, STORE);
     signal s_current_state: STATE;
     signal s_registers: T_REGISTER_BANK;
     
@@ -99,9 +99,13 @@ architecture Behavioral of top is
     signal load_halfword: STD_LOGIC_VECTOR (15 downto 0);
     signal load_byte: STD_LOGIC_VECTOR (7 downto 0);
     signal load_data: STD_LOGIC_VECTOR (31 downto 0);
+    signal store_data: STD_LOGIC_VECTOR (31 downto 0);
     signal mem_byte_access: BOOLEAN;
     signal mem_halfword_access: BOOLEAN;
     signal load_sign: STD_LOGIC;
+    signal store_mask: STD_LOGIC_VECTOR (3 downto 0);
+    signal store_byte_mask: STD_LOGIC_VECTOR (3 downto 0);
+    signal store_halfword_mask: STD_LOGIC_VECTOR (3 downto 0);
     
     signal take_branch: BOOLEAN;
 begin
@@ -187,10 +191,14 @@ begin
                         else
                             pc := s_next_pc;
                         end if;
-                        current_state := LOAD when is_load else FETCH_INST;
+                        current_state := LOAD when is_load
+                                            else STORE when is_store
+                                            else FETCH_INST;
                     when LOAD =>
                         current_state := WAIT_DATA;
                     when WAIT_DATA =>
+                        current_state := FETCH_INST;
+                    when STORE =>
                         current_state := FETCH_INST;
                 end case;
             end if;
@@ -229,9 +237,10 @@ begin
     
     -- Memory
     mem_addr <= STD_LOGIC_VECTOR(s_pc) when (s_current_state = WAIT_INST or s_current_state = FETCH_INST) else load_store_addr;
-    mem_w_en <= "0000";
+    mem_w_en <= store_mask when s_current_state = STORE else "0000";
     
-    load_store_addr <= STD_LOGIC_VECTOR(unsigned(s_rs1) + unsigned(i_imm));
+    load_store_addr <= STD_LOGIC_VECTOR(unsigned(s_rs1) + unsigned(s_imm)) when is_store
+                        else STD_LOGIC_VECTOR(unsigned(s_rs1) + unsigned(i_imm));
     load_halfword <= mem_dout(31 downto 16) when load_store_addr(1) else mem_dout(15 downto 0);
     load_byte <= load_halfword(15 downto 8) when load_store_addr(0) else load_halfword(7 downto 0);
     mem_byte_access <= funct3(1 downto 0) = "00";
@@ -240,7 +249,24 @@ begin
     load_data <= ((31 downto 8 => load_sign) & load_byte) when mem_byte_access
                     else ((31 downto 16 => load_sign) & load_halfword) when mem_halfword_access
                     else mem_dout;
-    
+
+    -- Construct data to write to RAM
+    mem_din <= store_data;
+    store_data(7 downto 0) <= s_rs2(7 downto 0);
+    store_data(15 downto 8) <= s_rs2(7 downto 0) when load_store_addr(0) else s_rs2(15 downto 8);
+    store_data(23 downto 16) <= s_rs2(7 downto 0) when load_store_addr(1) else s_rs2(23 downto 16);
+    store_data(31 downto 24) <= s_rs2(7 downto 0) when load_store_addr(0)
+                                else s_rs2(15 downto 8) when load_store_addr(1)
+                                else s_rs2(31 downto 24);
+    store_mask <= store_byte_mask when mem_byte_access
+                  else store_halfword_mask when mem_halfword_access
+                  else "1111";
+    store_byte_mask <= "1000" when load_store_addr(1 downto 0) = "11"
+                        else "0100" when load_store_addr(1 downto 0) = "10"
+                        else "0010" when load_store_addr(1 downto 0) = "01"
+                        else "0001";
+    store_halfword_mask <= "1100" when load_store_addr(1) else "0011";
+     
     process (all)
     begin
         case funct3 is

@@ -12,15 +12,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="215.000 ns"></ZoomEndTime>
-      <Cursor1Time time="21.600 ns"></Cursor1Time>
+      <ZoomStartTime time="239.904 ns"></ZoomStartTime>
+      <ZoomEndTime time="545.505 ns"></ZoomEndTime>
+      <Cursor1Time time="306.563 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="211"></NameColumnWidth>
-      <ValueColumnWidth column_width="67"></ValueColumnWidth>
+      <NameColumnWidth column_width="208"></NameColumnWidth>
+      <ValueColumnWidth column_width="66"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="12" />
+   <WVObjectSize size="14" />
    <wvobject type="logic" fp_name="/tb_top/top/core_clk">
       <obj_property name="ElementShortName">core_clk</obj_property>
       <obj_property name="ObjectShortName">core_clk</obj_property>
@@ -75,7 +75,6 @@
    <wvobject type="group" fp_name="group91">
       <obj_property name="label">Instruction Type</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/tb_top/top/is_system">
          <obj_property name="ElementShortName">is_system</obj_property>
          <obj_property name="ObjectShortName">is_system</obj_property>
@@ -120,7 +119,6 @@
    <wvobject type="group" fp_name="group94">
       <obj_property name="label">ALU</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="array" fp_name="/tb_top/top/alu_in1">
          <obj_property name="ElementShortName">alu_in1[31:0]</obj_property>
          <obj_property name="ObjectShortName">alu_in1[31:0]</obj_property>
@@ -158,6 +156,38 @@
          <obj_property name="ElementShortName">mem_w_en[3:0]</obj_property>
          <obj_property name="ObjectShortName">mem_w_en[3:0]</obj_property>
       </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group147">
+      <obj_property name="label">Inst Regs</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="array" fp_name="/tb_top/top/rs1_reg">
+         <obj_property name="ElementShortName">rs1_reg[4:0]</obj_property>
+         <obj_property name="ObjectShortName">rs1_reg[4:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_top/top/rs2_reg">
+         <obj_property name="ElementShortName">rs2_reg[4:0]</obj_property>
+         <obj_property name="ObjectShortName">rs2_reg[4:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_top/top/rd_reg">
+         <obj_property name="ElementShortName">rd_reg[4:0]</obj_property>
+         <obj_property name="ObjectShortName">rd_reg[4:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_top/top/s_rs1">
+         <obj_property name="ElementShortName">s_rs1[31:0]</obj_property>
+         <obj_property name="ObjectShortName">s_rs1[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_top/top/s_rs2">
+         <obj_property name="ElementShortName">s_rs2[31:0]</obj_property>
+         <obj_property name="ObjectShortName">s_rs2[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_top/top/s_rd">
+         <obj_property name="ElementShortName">s_rd[31:0]</obj_property>
+         <obj_property name="ObjectShortName">s_rd[31:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group345">
+      <obj_property name="label">Memory Load</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
       <wvobject type="array" fp_name="/tb_top/top/load_store_addr">
          <obj_property name="ElementShortName">load_store_addr[31:0]</obj_property>
          <obj_property name="ObjectShortName">load_store_addr[31:0]</obj_property>
@@ -187,33 +217,45 @@
          <obj_property name="ObjectShortName">load_sign</obj_property>
       </wvobject>
    </wvobject>
-   <wvobject type="group" fp_name="group147">
-      <obj_property name="label">Inst Regs</obj_property>
+   <wvobject type="group" fp_name="group342">
+      <obj_property name="label">Memory Store</obj_property>
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="isExpanded"></obj_property>
-      <wvobject type="array" fp_name="/tb_top/top/rs1_reg">
-         <obj_property name="ElementShortName">rs1_reg[4:0]</obj_property>
-         <obj_property name="ObjectShortName">rs1_reg[4:0]</obj_property>
+      <wvobject type="array" fp_name="/tb_top/top/load_store_addr">
+         <obj_property name="ElementShortName">load_store_addr[31:0]</obj_property>
+         <obj_property name="ObjectShortName">load_store_addr[31:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/tb_top/top/rs2_reg">
-         <obj_property name="ElementShortName">rs2_reg[4:0]</obj_property>
-         <obj_property name="ObjectShortName">rs2_reg[4:0]</obj_property>
+      <wvobject type="array" fp_name="/tb_top/top/mem_w_en">
+         <obj_property name="ElementShortName">mem_w_en[3:0]</obj_property>
+         <obj_property name="ObjectShortName">mem_w_en[3:0]</obj_property>
+         <obj_property name="Radix">BINARYRADIX</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/tb_top/top/rd_reg">
-         <obj_property name="ElementShortName">rd_reg[4:0]</obj_property>
-         <obj_property name="ObjectShortName">rd_reg[4:0]</obj_property>
+      <wvobject type="array" fp_name="/tb_top/top/store_mask">
+         <obj_property name="ElementShortName">store_mask[3:0]</obj_property>
+         <obj_property name="ObjectShortName">store_mask[3:0]</obj_property>
+         <obj_property name="Radix">BINARYRADIX</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/tb_top/top/s_rs1">
-         <obj_property name="ElementShortName">s_rs1[31:0]</obj_property>
-         <obj_property name="ObjectShortName">s_rs1[31:0]</obj_property>
+      <wvobject type="array" fp_name="/tb_top/top/store_byte_mask">
+         <obj_property name="ElementShortName">store_byte_mask[3:0]</obj_property>
+         <obj_property name="ObjectShortName">store_byte_mask[3:0]</obj_property>
+         <obj_property name="Radix">BINARYRADIX</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/tb_top/top/s_rs2">
-         <obj_property name="ElementShortName">s_rs2[31:0]</obj_property>
-         <obj_property name="ObjectShortName">s_rs2[31:0]</obj_property>
+      <wvobject type="array" fp_name="/tb_top/top/store_halfword_mask">
+         <obj_property name="ElementShortName">store_halfword_mask[3:0]</obj_property>
+         <obj_property name="ObjectShortName">store_halfword_mask[3:0]</obj_property>
+         <obj_property name="Radix">BINARYRADIX</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/tb_top/top/s_rd">
-         <obj_property name="ElementShortName">s_rd[31:0]</obj_property>
-         <obj_property name="ObjectShortName">s_rd[31:0]</obj_property>
+      <wvobject type="other" fp_name="/tb_top/top/mem_byte_access">
+         <obj_property name="ElementShortName">mem_byte_access</obj_property>
+         <obj_property name="ObjectShortName">mem_byte_access</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb_top/top/mem_halfword_access">
+         <obj_property name="ElementShortName">mem_halfword_access</obj_property>
+         <obj_property name="ObjectShortName">mem_halfword_access</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_top/top/store_data">
+         <obj_property name="ElementShortName">store_data[31:0]</obj_property>
+         <obj_property name="ObjectShortName">store_data[31:0]</obj_property>
       </wvobject>
    </wvobject>
 </wave_config>
