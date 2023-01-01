@@ -45,7 +45,7 @@ end processor;
 architecture Behavioral of processor is
     type T_REGISTER_BANK is array (31 downto 0) of STD_LOGIC_VECTOR (31 downto 0);
     
-    type STATE is (FETCH_INST, WAIT_INST, EXECUTE, LOAD, WAIT_DATA, STORE);
+    type STATE is (FETCH_INST, WAIT_INST, EXECUTE, WAIT_DATA);
     signal s_current_state: STATE;
     signal s_registers: T_REGISTER_BANK;
 
@@ -165,14 +165,8 @@ begin
                         else
                             pc := s_next_pc;
                         end if;
-                        current_state := LOAD when is_load
-                                            else STORE when is_store
-                                            else FETCH_INST;
-                    when LOAD =>
-                        current_state := WAIT_DATA;
+                        current_state := WAIT_DATA when is_load else FETCH_INST;
                     when WAIT_DATA =>
-                        current_state := FETCH_INST;
-                    when STORE =>
                         current_state := FETCH_INST;
                 end case;
             end if;
@@ -189,7 +183,7 @@ begin
         s_rd <= rd;
     end process;
     
-    bus_r_strb <= '1' when s_current_state = FETCH_INST or s_current_state = LOAD else '0';
+    bus_r_strb <= '1' when s_current_state = FETCH_INST or (s_current_state = EXECUTE and is_load = '1') else '0';
     alu_in1 <= s_rs1;
     alu_in2 <= s_rs2 when is_alu_reg else i_imm;
     alu_sh_amt <= to_integer(unsigned(s_rs2(4 downto 0))) when is_alu_reg else to_integer(unsigned(rs2_reg));
@@ -199,8 +193,8 @@ begin
                         else load_data when is_load
                         else alu_out;
     write_back_en <= '1' when s_current_state = EXECUTE
-                             and (is_alu_reg or is_alu_imm or is_jal or is_jalr or is_lui or is_auipc) = '1'
-                     else '1' when s_current_state = LOAD and is_load = '1'
+                             and (not is_branch and not is_store and not is_load and not is_system) = '1'
+                     else '1' when s_current_state = WAIT_DATA
                      else '0';
                          
     s_next_pc <= s_pc + unsigned(b_imm) when (is_branch = '1' and take_branch)
@@ -210,7 +204,7 @@ begin
     
     -- Memory
     bus_addr <= STD_LOGIC_VECTOR(s_pc) when (s_current_state = WAIT_INST or s_current_state = FETCH_INST) else load_store_addr;
-    bus_w_mask <= store_mask when s_current_state = STORE else "0000";
+    bus_w_mask <= store_mask when s_current_state = EXECUTE and is_store = '1' else "0000";
     
     load_store_addr <= STD_LOGIC_VECTOR(unsigned(s_rs1) + unsigned(s_imm)) when is_store
                         else STD_LOGIC_VECTOR(unsigned(s_rs1) + unsigned(i_imm));
