@@ -114,7 +114,7 @@ begin
             clk_out => core_clk
         );
         
-    rom : entity work.rom
+    ram : entity work.ram
         port map (
             clk => core_clk,
             addr => mem_addr(11 downto 2),

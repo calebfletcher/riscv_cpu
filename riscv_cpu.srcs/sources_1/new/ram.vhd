@@ -2,9 +2,9 @@
 -- Company: 
 -- Engineer: 
 -- 
--- Create Date: 12/27/2022 04:09:01 PM
+-- Create Date: 01/01/2023 02:11:22 PM
 -- Design Name: 
--- Module Name: rom - Behavioral
+-- Module Name: ram - Behavioral
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
@@ -31,15 +31,15 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity rom is
+entity ram is
     port ( clk : in STD_LOGIC;
            addr : in STD_LOGIC_VECTOR (9 downto 0);
            w_en: in STD_LOGIC_VECTOR (3 downto 0);
            din : in STD_LOGIC_VECTOR (31 downto 0);
            dout : out STD_LOGIC_VECTOR (31 downto 0));
-end rom;
+end ram;
 
-architecture Behavioral of rom is
+architecture Behavioral of ram is
     COMPONENT blk_mem_gen_0
       PORT (
         clka : IN STD_LOGIC;
