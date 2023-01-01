@@ -33,7 +33,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity ram is
     port ( clk : in STD_LOGIC;
-           addr : in STD_LOGIC_VECTOR (9 downto 0);
+           addr : in STD_LOGIC_VECTOR (31 downto 0);
            w_en: in STD_LOGIC_VECTOR (3 downto 0);
            din : in STD_LOGIC_VECTOR (31 downto 0);
            dout : out STD_LOGIC_VECTOR (31 downto 0));
@@ -54,7 +54,7 @@ begin
         PORT MAP (
             clka => clk,
             wea => w_en,
-            addra => addr,
+            addra => addr(11 downto 2),
             dina => din,
             douta => dout
         );

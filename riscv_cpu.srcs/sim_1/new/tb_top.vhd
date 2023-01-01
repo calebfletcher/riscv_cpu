@@ -61,8 +61,7 @@ begin
         wait until is_halted = '1';
         wait for period;
         
-        assert false report "No errors found" severity failure;
-        wait;
+        std.env.finish;
     end process;
 
 end Behavioral;
