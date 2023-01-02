@@ -86,6 +86,7 @@ architecture Behavioral of processor is
     signal is_load : STD_LOGIC;
     signal is_store : STD_LOGIC;
     signal is_system : STD_LOGIC;
+    signal is_misc_mem : STD_LOGIC;
     signal rs1_reg : STD_LOGIC_VECTOR (4 downto 0);
     signal rs2_reg : STD_LOGIC_VECTOR (4 downto 0);
     signal rd_reg : STD_LOGIC_VECTOR (4 downto 0);
@@ -122,30 +123,30 @@ architecture Behavioral of processor is
     
     signal take_branch: BOOLEAN;
 begin
-    decoder : entity work.instruction_decoder
-        port map (
-            inst => s_inst,
-            is_alu_reg => is_alu_reg,
-            is_alu_imm => is_alu_imm,
-            is_branch => is_branch,
-            is_jalr => is_jalr,
-            is_jal => is_jal,
-            is_auipc => is_auipc,
-            is_lui => is_lui,
-            is_load => is_load,
-            is_store => is_store,
-            is_system => is_system,
-            rs1_reg => rs1_reg,
-            rs2_reg => rs2_reg,
-            rd_reg => rd_reg,
-            funct3 => funct3,
-            funct7 => funct7,
-            u_imm => u_imm,
-            i_imm => i_imm,
-            s_imm => s_imm,
-            b_imm => b_imm,
-            j_imm => j_imm
-        );
+    is_alu_reg <= '1' when s_inst(6 downto 0) = "0110011" else '0';
+    is_alu_imm <= '1' when s_inst(6 downto 0) = "0010011" else '0';
+    is_branch  <= '1' when s_inst(6 downto 0) = "1100011" else '0';
+    is_jalr    <= '1' when s_inst(6 downto 0) = "1100111" else '0';
+    is_jal     <= '1' when s_inst(6 downto 0) = "1101111" else '0';
+    is_auipc   <= '1' when s_inst(6 downto 0) = "0010111" else '0';
+    is_lui     <= '1' when s_inst(6 downto 0) = "0110111" else '0';
+    is_load    <= '1' when s_inst(6 downto 0) = "0000011" else '0';
+    is_store   <= '1' when s_inst(6 downto 0) = "0100011" else '0';
+    is_system  <= '1' when s_inst(6 downto 0) = "1110011" else '0';
+    is_misc_mem <= '1' when s_inst(6 downto 0) = "0001111" else '0';
+
+    rs1_reg <= s_inst(19 downto 15);
+    rs2_reg <= s_inst(24 downto 20);
+    rd_reg <= s_inst(11 downto 7);
+
+    funct3 <= s_inst(14 downto 12);
+    funct7 <= s_inst(31 downto 25);
+
+    u_imm <= s_inst(31 downto 12) & (11 downto 0 => '0');
+    i_imm <= (31 downto 11 => s_inst(31)) & s_inst(30 downto 20);
+    s_imm <= (31 downto 11 => s_inst(31)) & s_inst(30 downto 25) & s_inst(11 downto 7);
+    b_imm <= (31 downto 12 => s_inst(31)) & s_inst(7) & s_inst(30 downto 25) & s_inst(11 downto 8) & '0';
+    j_imm <= (31 downto 20 => s_inst(31)) & s_inst(19 downto 12) & s_inst(20) & s_inst(30 downto 21) & '0';
         
     process (clk)
         variable pc: UNSIGNED (31 downto 0) := (others => '0');
