@@ -41,13 +41,18 @@ architecture Behavioral of tb_top is
     signal rst : STD_LOGIC := '0';
     signal led : STD_LOGIC_VECTOR (3 downto 0);
     signal is_halted : STD_LOGIC;
+    signal uart_tx : STD_LOGIC;
+    signal uart_rx : STD_LOGIC;
 begin
+    uart_rx <= '1';
     top : entity work.top
         port map (
             CLK100MHZ => clk,
             btn(0) => rst,
             led => led,
-            ja(0) => is_halted
+            ja(0) => is_halted,
+            uart_rxd_out => uart_tx,
+            uart_txd_in => uart_rx
         );
 
     clk <= not clk after period/2;

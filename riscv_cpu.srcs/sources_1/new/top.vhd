@@ -38,7 +38,10 @@ entity top is
     port ( CLK100MHZ : in STD_LOGIC;
            btn : in STD_LOGIC_VECTOR (0 downto 0);
            led : out STD_LOGIC_VECTOR (3 downto 0);
-           ja : out STD_LOGIC_VECTOR (0 downto 0));
+           ja : out STD_LOGIC_VECTOR (0 downto 0);
+           uart_rxd_out : out STD_LOGIC;
+           uart_txd_in : in STD_LOGIC
+    );
 end top;
 
 architecture Behavioral of top is
@@ -172,7 +175,8 @@ begin
         port map (
             s_aclk => clk,
             s_aresetn => not rst,
-            s_axi_awaddr => ram_awaddr,
+            s_axi_awaddr(27 downto 0) => ram_awaddr(27 downto 0),
+            s_axi_awaddr(31 downto 28) => (others => '0'),
             s_axi_awvalid => ram_awvalid,
             s_axi_awready => ram_awready,
             s_axi_wdata => ram_wdata,
@@ -182,13 +186,40 @@ begin
             s_axi_bresp => ram_bresp,
             s_axi_bvalid => ram_bvalid,
             s_axi_bready => ram_bready,
-            s_axi_araddr => ram_araddr,
+            s_axi_araddr(27 downto 0) => ram_araddr(27 downto 0),
+            s_axi_araddr(31 downto 28) => (others => '0'),
             s_axi_arvalid => ram_arvalid,
             s_axi_arready => ram_arready,
             s_axi_rdata => ram_rdata,
             s_axi_rresp => ram_rresp,
             s_axi_rvalid => ram_rvalid,
             s_axi_rready => ram_rready
+        );
+        
+    uart : entity work.uart
+        port map (
+            s_axi_aclk => clk,
+            s_axi_aresetn => not rst,
+            s_axi_awaddr => uart_awaddr(12 downto 0),
+            s_axi_awvalid => uart_awvalid,
+            s_axi_awready => uart_awready,
+            s_axi_wdata => uart_wdata,
+            s_axi_wstrb => uart_wstrb,
+            s_axi_wvalid => uart_wvalid,
+            s_axi_wready => uart_wready,
+            s_axi_bresp => uart_bresp,
+            s_axi_bvalid => uart_bvalid,
+            s_axi_bready => uart_bready,
+            s_axi_araddr => uart_araddr(12 downto 0),
+            s_axi_arvalid => uart_arvalid,
+            s_axi_arready => uart_arready,
+            s_axi_rdata => uart_rdata,
+            s_axi_rresp => uart_rresp,
+            s_axi_rvalid => uart_rvalid,
+            s_axi_rready => uart_rready,
+            int => open,
+            tx => uart_rxd_out,
+            rx => uart_txd_in
         );
         
     processor : entity work.processor
