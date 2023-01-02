@@ -38,19 +38,19 @@ end tb_top;
 architecture Behavioral of tb_top is
     constant period: TIME := 10ns;
     signal clk: STD_LOGIC := '0';
-    signal rst : STD_LOGIC := '0';
+    signal rst : STD_LOGIC := '1';
     signal led : STD_LOGIC_VECTOR (3 downto 0);
     signal is_halted : STD_LOGIC;
     signal uart_tx : STD_LOGIC;
     signal uart_rx : STD_LOGIC;
 begin
     uart_rx <= '1';
+    is_halted <= '0';
     top : entity work.top
         port map (
             CLK100MHZ => clk,
-            btn(0) => rst,
+            ck_rst => rst,
             led => led,
-            ja(0) => is_halted,
             uart_rxd_out => uart_tx,
             uart_txd_in => uart_rx
         );
@@ -58,9 +58,9 @@ begin
     clk <= not clk after period/2;
     
     process begin
-        rst <= '1';
-        wait for period;
         rst <= '0';
+        wait for period;
+        rst <= '1';
         wait for period/2;
         
         wait until is_halted = '1';

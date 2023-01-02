@@ -164,6 +164,11 @@ begin
                 for i in 0 to 31 loop
                     registers(i) := (others => '0');
                 end loop;
+                halt_state := '0';
+                current_inst := x"00000000";
+                rs1 := x"00000000";
+                rs2 := x"00000000";
+                rd := x"00000000";
             else
                 -- Write back to registers as long as the register isn't r0
                 if write_back_en = '1' and rd_reg /= "00000" then

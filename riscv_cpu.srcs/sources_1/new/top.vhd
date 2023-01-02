@@ -36,9 +36,8 @@ use xpm.vcomponents.all;
 
 entity top is
     port ( CLK100MHZ : in STD_LOGIC;
-           btn : in STD_LOGIC_VECTOR (0 downto 0);
+           ck_rst : in STD_LOGIC;
            led : out STD_LOGIC_VECTOR (3 downto 0);
-           ja : out STD_LOGIC_VECTOR (0 downto 0);
            uart_rxd_out : out STD_LOGIC;
            uart_txd_in : in STD_LOGIC
     );
@@ -104,8 +103,8 @@ architecture Behavioral of top is
     signal uart_rready : STD_LOGIC;
 begin
     clk <= CLK100MHZ;
-    rst <= btn(0);
-    ja(0) <= is_halted;
+    rst <= not ck_rst;
+    led(0) <= '0';
     
     crossbar : entity work.crossbar
         port map (
