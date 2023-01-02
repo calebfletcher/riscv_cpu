@@ -45,7 +45,7 @@ end top;
 
 architecture Behavioral of top is
     signal clk: STD_LOGIC;
-    signal rst: STD_LOGIC;
+    signal rstn: STD_LOGIC;
     signal is_halted: STD_LOGIC;
 
     signal cpu_awaddr : STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -103,13 +103,13 @@ architecture Behavioral of top is
     signal uart_rready : STD_LOGIC;
 begin
     clk <= CLK100MHZ;
-    rst <= not ck_rst;
+    rstn <= ck_rst;
     led(0) <= '0';
     
     crossbar : entity work.crossbar
         port map (
             aclk => clk,
-            aresetn => not rst,
+            aresetn => rstn,
 
             m_axi_awprot => open,
             m_axi_arprot => open,
@@ -173,7 +173,7 @@ begin
     ram : entity work.ram
         port map (
             s_aclk => clk,
-            s_aresetn => not rst,
+            s_aresetn => rstn,
             s_axi_awaddr(27 downto 0) => ram_awaddr(27 downto 0),
             s_axi_awaddr(31 downto 28) => (others => '0'),
             s_axi_awvalid => ram_awvalid,
@@ -198,7 +198,7 @@ begin
     uart : entity work.uart
         port map (
             s_axi_aclk => clk,
-            s_axi_aresetn => not rst,
+            s_axi_aresetn => rstn,
             s_axi_awaddr => uart_awaddr(12 downto 0),
             s_axi_awvalid => uart_awvalid,
             s_axi_awready => uart_awready,
@@ -224,7 +224,7 @@ begin
     processor : entity work.processor
         port map (
             clk => clk,
-            rst => rst,
+            rstn => rstn,
             is_halted => is_halted,
             m_axi_awaddr => cpu_awaddr,
             m_axi_awvalid => cpu_awvalid,

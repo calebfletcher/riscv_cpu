@@ -34,7 +34,7 @@ use IEEE.NUMERIC_STD.ALL;
 entity processor is
     Port (
         clk : IN STD_LOGIC;
-        rst : IN STD_LOGIC;
+        rstn : IN STD_LOGIC;
         is_halted : OUT STD_LOGIC;
         
         m_axi_awaddr : OUT STD_LOGIC_VECTOR(31 DOWNTO 0);
@@ -159,7 +159,7 @@ begin
         variable halt_state: STD_LOGIC := '0';
     begin
         if rising_edge(clk) then
-            if rst then
+            if not rstn then
                 current_state := RESET;
                 pc := (others => '0');
                 for i in 0 to 31 loop
@@ -261,7 +261,7 @@ begin
     m_axi_bready <= '1'; -- always accept responses
     
     m_axi_araddr <= STD_LOGIC_VECTOR(s_pc) when s_current_state = FETCH_INST else load_store_addr;
-    m_axi_arvalid <= '1' when rst = '0' and (s_current_state = FETCH_INST or (s_current_state = EXECUTE and is_load)) else '0';
+    m_axi_arvalid <= '1' when rstn = '1' and (s_current_state = FETCH_INST or (s_current_state = EXECUTE and is_load)) else '0';
     
     m_axi_rready <=  '1' when s_current_state = WAIT_INST or s_current_state = WAIT_DATA else '0';
     
