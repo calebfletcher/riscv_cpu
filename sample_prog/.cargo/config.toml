@@ -1,7 +1,10 @@
 [build]
-target = "riscv32i-unknown-none-elf"
+target = "target.json"
 
 
-[target.riscv32i-unknown-none-elf]
-linker = "riscv32-unknown-elf-gcc"
-rustflags = ["-C", "link-arg=-Tlinker.lds", "-C", "link-arg=-nostdlib"]
+[target.'cfg(target_os = "none")']
+rustflags = ["-C", "link-arg=-Tlinker.lds"]
+
+
+[unstable]
+build-std = ["core", "compiler_builtins"]
