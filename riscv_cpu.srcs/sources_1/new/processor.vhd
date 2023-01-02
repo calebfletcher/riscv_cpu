@@ -76,17 +76,17 @@ architecture Behavioral of processor is
     signal s_rs2: STD_LOGIC_VECTOR (31 downto 0);
     signal s_rd: STD_LOGIC_VECTOR (31 downto 0);
 
-    signal is_alu_reg : STD_LOGIC;
-    signal is_alu_imm : STD_LOGIC;
-    signal is_branch : STD_LOGIC;
-    signal is_jalr : STD_LOGIC;
-    signal is_jal : STD_LOGIC;
-    signal is_auipc : STD_LOGIC;
-    signal is_lui : STD_LOGIC;
-    signal is_load : STD_LOGIC;
-    signal is_store : STD_LOGIC;
-    signal is_system : STD_LOGIC;
-    signal is_misc_mem : STD_LOGIC;
+    signal is_alu_reg : BOOLEAN;
+    signal is_alu_imm : BOOLEAN;
+    signal is_branch : BOOLEAN;
+    signal is_jalr : BOOLEAN;
+    signal is_jal : BOOLEAN;
+    signal is_auipc : BOOLEAN;
+    signal is_lui : BOOLEAN;
+    signal is_load : BOOLEAN;
+    signal is_store : BOOLEAN;
+    signal is_system : BOOLEAN;
+    signal is_misc_mem : BOOLEAN;
     signal rs1_reg : STD_LOGIC_VECTOR (4 downto 0);
     signal rs2_reg : STD_LOGIC_VECTOR (4 downto 0);
     signal rd_reg : STD_LOGIC_VECTOR (4 downto 0);
@@ -99,7 +99,7 @@ architecture Behavioral of processor is
     signal j_imm : STD_LOGIC_VECTOR (31 downto 0);
     
 
-    signal write_back_en: STD_LOGIC;
+    signal write_back_en: BOOLEAN;
     signal write_back_data: STD_LOGIC_VECTOR(31 downto 0);
     
     -- ALU
@@ -123,17 +123,17 @@ architecture Behavioral of processor is
     
     signal take_branch: BOOLEAN;
 begin
-    is_alu_reg <= '1' when s_inst(6 downto 0) = "0110011" else '0';
-    is_alu_imm <= '1' when s_inst(6 downto 0) = "0010011" else '0';
-    is_branch  <= '1' when s_inst(6 downto 0) = "1100011" else '0';
-    is_jalr    <= '1' when s_inst(6 downto 0) = "1100111" else '0';
-    is_jal     <= '1' when s_inst(6 downto 0) = "1101111" else '0';
-    is_auipc   <= '1' when s_inst(6 downto 0) = "0010111" else '0';
-    is_lui     <= '1' when s_inst(6 downto 0) = "0110111" else '0';
-    is_load    <= '1' when s_inst(6 downto 0) = "0000011" else '0';
-    is_store   <= '1' when s_inst(6 downto 0) = "0100011" else '0';
-    is_system  <= '1' when s_inst(6 downto 0) = "1110011" else '0';
-    is_misc_mem <= '1' when s_inst(6 downto 0) = "0001111" else '0';
+    is_alu_reg <= s_inst(6 downto 0) = "0110011";
+    is_alu_imm <= s_inst(6 downto 0) = "0010011";
+    is_branch  <= s_inst(6 downto 0) = "1100011";
+    is_jalr    <= s_inst(6 downto 0) = "1100111";
+    is_jal     <= s_inst(6 downto 0) = "1101111";
+    is_auipc   <= s_inst(6 downto 0) = "0010111";
+    is_lui     <= s_inst(6 downto 0) = "0110111";
+    is_load    <= s_inst(6 downto 0) = "0000011";
+    is_store   <= s_inst(6 downto 0) = "0100011";
+    is_system  <= s_inst(6 downto 0) = "1110011";
+    is_misc_mem <= s_inst(6 downto 0) = "0001111";
 
     rs1_reg <= s_inst(19 downto 15);
     rs2_reg <= s_inst(24 downto 20);
@@ -172,7 +172,7 @@ begin
                 rd := x"00000000";
             else
                 -- Write back to registers as long as the register isn't r0
-                if write_back_en = '1' and rd_reg /= "00000" then
+                if write_back_en and rd_reg /= "00000" then
                     registers(to_integer(unsigned(rd_reg))) := write_back_data;
                 end if;
                 
@@ -200,10 +200,10 @@ begin
                             halt_state := '1';
                         end if;
                         
-                        if is_store and m_axi_awvalid and m_axi_awready then
+                        if is_store and m_axi_awvalid = '1' and m_axi_awready = '1' then
                             pc := s_next_pc;
                             current_state := STORE;
-                        elsif is_load and m_axi_arvalid and m_axi_arready then
+                        elsif is_load and m_axi_arvalid = '1' and m_axi_arready = '1' then
                             pc := s_next_pc;
                             current_state := WAIT_DATA;
                         elsif not is_load and not is_store then
@@ -242,28 +242,26 @@ begin
                         else STD_LOGIC_VECTOR(s_pc + unsigned(u_imm)) when is_auipc
                         else load_data when is_load
                         else alu_out;
-    write_back_en <= '1' when s_current_state = EXECUTE
-                             and (not is_branch and not is_store and not is_load and not is_system) = '1'
-                     else '1' when s_current_state = WAIT_DATA and m_axi_rready = '1' and m_axi_rvalid = '1'
-                     else '0';
+    write_back_en <= (s_current_state = EXECUTE and (not is_branch and not is_store and not is_load and not is_system))
+                     or (s_current_state = WAIT_DATA and m_axi_rready = '1' and m_axi_rvalid = '1');
                          
-    s_next_pc <= s_pc + unsigned(b_imm) when (is_branch = '1' and take_branch)
+    s_next_pc <= s_pc + unsigned(b_imm) when (is_branch and take_branch)
                     else s_pc + unsigned(j_imm) when is_jal
                     else unsigned(s_rs1) + unsigned(i_imm) when is_jalr
                     else s_pc + 4;
     
     -- AXI Bus
     m_axi_awaddr <= m_axi_araddr;
-    m_axi_awvalid <= '1' when s_current_state = EXECUTE and is_store = '1' else '0';
+    m_axi_awvalid <= '1' when s_current_state = EXECUTE and is_store else '0';
     
     m_axi_wdata <= store_data;
     m_axi_wstrb <= store_mask;
-    m_axi_wvalid <= '1' when s_current_state = STORE or (s_current_state = EXECUTE and is_store = '1') else '0';
+    m_axi_wvalid <= '1' when s_current_state = STORE or (s_current_state = EXECUTE and is_store) else '0';
     
     m_axi_bready <= '1'; -- always accept responses
     
     m_axi_araddr <= STD_LOGIC_VECTOR(s_pc) when s_current_state = FETCH_INST else load_store_addr;
-    m_axi_arvalid <= '1' when rst = '0' and (s_current_state = FETCH_INST or (s_current_state = EXECUTE and is_load = '1')) else '0';
+    m_axi_arvalid <= '1' when rst = '0' and (s_current_state = FETCH_INST or (s_current_state = EXECUTE and is_load)) else '0';
     
     m_axi_rready <=  '1' when s_current_state = WAIT_INST or s_current_state = WAIT_DATA else '0';
     
